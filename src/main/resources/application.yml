@@ -73,4 +73,4 @@ mybatis-plus:
   # mybatis 配置文件的路径
   # config-location: "classpath:mybatis/mybatis.config"
   # mapper 映射文件的路径，可以有多个
-  mapper-locations: classpath*:/mapper/**Mapper.xml
+  mapper-locations: classpath:/mapper/**Mapper.xml

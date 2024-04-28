@@ -9,7 +9,6 @@ class MaterialManagementApplicationTests {
 
 	@Test
 	void contextLoads() {
-
 	}
 
 }

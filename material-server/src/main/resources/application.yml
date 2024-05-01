@@ -1,0 +1,26 @@
+# 访问接口
+server:
+  port: 8080
+# Spring配置
+spring:
+  # 启用指定配置文件
+  #（文件名需满足application-{profile}.yml的格式）
+  profiles:
+    active: druid,email,openapi
+# MyBatis Plus 的配置
+mybatis-plus:
+  # mybatis 配置文件的路径
+  # config-location: "classpath:mybatis/mybatis.config"
+  # mapper 映射文件的路径，可以有多个
+  mapper-locations: classpath:/mapper/**Mapper.xml
+material:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: adfg456adfg489645gfdadfgzcvbiadfg84756adfgrth4r98h46rt54h56erlhkj645
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+    user-secret-key: itheima
+    user-ttl: 7200000
+    user-token-name: authentication

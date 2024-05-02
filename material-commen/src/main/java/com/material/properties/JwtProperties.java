@@ -5,7 +5,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * 从application.yml文件获取material.jwt的配置并赋值到类的属性
+ */
 @Component
 @ConfigurationProperties(prefix = "material.jwt")
 @Data

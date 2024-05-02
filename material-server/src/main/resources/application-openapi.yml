@@ -18,7 +18,7 @@ springdoc:
       # paths-to-match: 配置要匹配的路径,默认为/**
       paths-to-match: '/**'
       # packages-to-scan: 配置要扫描的包的路径,直接配置为Controller类所在的包名即可
-      packages-to-scan: cn.bytewisehub.pai.web
+      packages-to-scan: com.material.controller
 
 # knife4j项目访问访问地址:http://127.0.0.1:8080/doc.html#/home
 knife4j:

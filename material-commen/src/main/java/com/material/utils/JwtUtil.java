@@ -8,12 +8,12 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecureDigestAlgorithm;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import java.util.Map;
 
 public class JwtUtil {
+
     /**
      * 生成jwt
      * 使用Hs256算法, 私匙使用固定秘钥
@@ -49,14 +49,17 @@ public class JwtUtil {
      * @param token     加密后的token
      * @return
      */
-    public static Jws<Claims> parseJWT(String secretKey, String token){
+    public static Jws<Claims> parseJWT(String token, String secretKey){
         //密钥实例
         SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
         Jws<Claims> claimsJws = Jwts.parser()
-                .verifyWith(key)  //设置签名的密钥
+                // 设置签名的密钥
+                .verifyWith(key)
                 .build()
-                .parseSignedClaims(token); //设置要解析的jwt
+                // 设置要解析的jwt
+                .parseSignedClaims(token);
+
 
         return claimsJws;
     }

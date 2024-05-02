@@ -4,6 +4,7 @@ package com.material.service.admin;
 import com.material.dto.admin.WorkerLoginDTO;
 import com.material.dto.admin.WorkerRegisterDTO;
 import com.material.entity.Worker;
+import com.material.vo.admin.WorkerLoginVO;
 
 public interface WorkerService {
 
@@ -17,5 +18,5 @@ public interface WorkerService {
      * @param workerLoginDTO
      * @return
      */
-    Worker login(WorkerLoginDTO workerLoginDTO);
+    WorkerLoginVO login(WorkerLoginDTO workerLoginDTO);
 }

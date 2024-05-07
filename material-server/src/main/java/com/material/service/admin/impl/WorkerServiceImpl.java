@@ -1,11 +1,12 @@
 package com.material.service.admin.impl;
 
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.material.constant.JwtClaimsConstant;
 import com.material.constant.StatusConstant;
 import com.material.context.BaseContext;
-import com.material.dto.admin.WorkerLoginDTO;
-import com.material.dto.admin.WorkerRegisterDTO;
+import com.material.dto.admin.*;
 import com.material.entity.Worker;
 import com.material.constant.MessageConstant;
 import com.material.exception.AccountLockedException;
@@ -13,16 +14,20 @@ import com.material.exception.AccountNotFoundException;
 import com.material.exception.PasswordErrorException;
 import com.material.mapper.admin.WorkerMapper;
 import com.material.properties.JwtProperties;
+import com.material.result.PageResult;
+import com.material.result.Result;
 import com.material.service.admin.WorkerService;
 import com.material.utils.JwtUtil;
 import com.material.vo.admin.WorkerLoginVO;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -118,5 +123,95 @@ public class WorkerServiceImpl implements WorkerService {
 
         //3、返回实体对象
         return workerLoginVO;
+    }
+
+    /**
+     * 分页查询，可以添加name内容来进行姓名查询
+     * @param workerPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult pageQuery(WorkerPageQueryDTO workerPageQueryDTO) {
+        // select * from employee limit 0,10
+        //开始分页查询
+        PageHelper.startPage(workerPageQueryDTO.getPage(), workerPageQueryDTO.getPageSize());
+
+        Page<Worker> page = workerMapper.pageQuery(workerPageQueryDTO);
+
+        long total = page.getTotal();
+        List<Worker> records = page.getResult();
+
+        return new PageResult(total, records);
+    }
+
+    /**
+     * 启用禁用员工账号
+     *
+     * @param status
+     * @param id
+     */
+    public void startOrStop(Integer status, Long id) {
+
+        Worker worker = Worker.builder()
+                .status(status)
+                .id(id)
+                .build();
+
+        int count = workerMapper.update(worker);
+        if (count == 0) {
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+    }
+
+    /**
+     * 根据id获取员工信息
+     * @param id
+     * @return
+     */
+    @Override
+    public Worker getById(Long id) {
+        Worker worker = workerMapper.getById(id);
+        if(worker==null){
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+        // 将密码用***隐藏起来
+        worker.setPassword("****");
+        return worker;
+    }
+
+    /**
+     * 编辑员工信息
+     * @param workerDTO
+     */
+    @Override
+    public void update(WorkerDTO workerDTO) {
+        Worker worker = new Worker();
+        BeanUtils.copyProperties(workerDTO, worker);
+
+        worker.setUpdateTime(LocalDateTime.now());
+        worker.setUpdateUser(BaseContext.getCurrentId());
+
+        workerMapper.update(worker);
+    }
+
+    @Override
+    public void editPassword(WorkerEditPasswordDTO workerEditPasswordDTO) {
+        Worker worker = new Worker();
+        // 获取需要设置的密码与随机盐
+        String password = workerEditPasswordDTO.getPassword();
+        String salt = workerEditPasswordDTO.getSalt();
+
+        // 密码加盐用md5进行加密，放进DTO对象
+        String md5Password = DigestUtils.md5DigestAsHex((password + salt).getBytes());
+        workerEditPasswordDTO.setPassword(md5Password);
+
+
+        // 对创建的worker对象赋值
+        // 将DTO对象的属性值放进worker
+        BeanUtils.copyProperties(workerEditPasswordDTO, worker);
+        // 添加其它属性
+        worker.setUpdateTime(LocalDateTime.now());
+        worker.setUpdateUser(BaseContext.getCurrentId());
+        workerMapper.editPassword(worker);
     }
 }

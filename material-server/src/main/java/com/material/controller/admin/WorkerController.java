@@ -1,25 +1,18 @@
 package com.material.controller.admin;
 
-import com.material.constant.JwtClaimsConstant;
-import com.material.dto.admin.WorkerLoginDTO;
-import com.material.dto.admin.WorkerRegisterDTO;
+import com.material.dto.admin.*;
 import com.material.entity.Worker;
 import com.material.properties.JwtProperties;
+import com.material.result.PageResult;
 import com.material.result.Result;
 import com.material.service.admin.WorkerService;
-import com.material.utils.JwtUtil;
 import com.material.vo.admin.WorkerLoginVO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/worker")
@@ -76,13 +69,89 @@ public class WorkerController {
     @Operation(
             description = "员工退出登录",
             summary = "员工退出登录"
-
     )
     public Result<String> logout(){
         return Result.success();
     }
 
+    /**
+     * 员工分页查询
+     * @param workerPageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    @Operation(
+            description = "员工分页查询",
+            summary = "员工分页查询"
+    )
+    public Result<PageResult> page(WorkerPageQueryDTO workerPageQueryDTO){
+        log.info("员工分页查询，参数为：{}", workerPageQueryDTO);
+        PageResult pageResult = workerService.pageQuery(workerPageQueryDTO);//后续定义
+        return Result.success(pageResult);
+    }
 
+    /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @Operation(
+            description = "启动禁用员工账号",
+            summary = "启动禁用员工账号"
+    )
+    public Result startOrStop(@PathVariable Integer status,Long id){
+        log.info("启用禁用员工账号：{},{}",status,id);
+        workerService.startOrStop(status,id);
+        // 如果修改的行数为0，返回错误信息
 
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询员工信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/find/{id}")
+    @Operation(
+            description = "根据员工id查询员工信息",
+            summary = "根据员工id查询员工信息"
+    )
+    public Result<Worker> getById(@PathVariable Long id){
+        Worker worker = workerService.getById(id);
+        if(worker==null){
+            return Result.error("该账号不存在！");
+        }
+        return Result.success(worker);
+    }
+
+    /**
+     * 编辑员工信息
+     * @param workerDTO
+     * @return
+     */
+    @PutMapping("/update")
+    @Operation(
+            description = "编辑员工信息",
+            summary = "编辑员工信息"
+    )
+    public Result update(@RequestBody WorkerDTO workerDTO){
+        log.info("编辑员工信息：{}", workerDTO);
+        workerService.update(workerDTO);
+        return Result.success();
+    }
+
+    @PutMapping("/editPassword")
+    @Operation(
+            description = "编辑员工信息",
+            summary = "编辑员工信息"
+    )
+    public Result editPassword(@RequestBody WorkerEditPasswordDTO workerEditPasswordDTO){
+        log.info("修改员工密码：{}", workerEditPasswordDTO);
+        workerService.editPassword(workerEditPasswordDTO);
+        return Result.success();
+    }
 
 }

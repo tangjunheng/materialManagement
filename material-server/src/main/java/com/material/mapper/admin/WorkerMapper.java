@@ -2,7 +2,10 @@ package com.material.mapper.admin;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.pagehelper.Page;
+import com.material.dto.admin.WorkerPageQueryDTO;
 import com.material.entity.Worker;
+import com.material.result.PageResult;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
@@ -27,10 +30,25 @@ public interface WorkerMapper extends BaseMapper {
     Worker getByUserName(String workerName);
 
     /**
+     * 分页查询
+     * @param workerPageQueryDTO
+     * @return
+     */
+    Page<Worker> pageQuery(WorkerPageQueryDTO workerPageQueryDTO);
+
+    /**
      * 根据id查询员工信息
      * @param id
      * @return
      */
     @Select("select * from worker where id = #{id}")
-    Worker getById(String id);
+    Worker getById(Long id);
+
+    /**
+     * 根据主键动态修改属性
+     * @param worker
+     */
+    int update(Worker worker);
+
+    void editPassword(Worker worker);
 }

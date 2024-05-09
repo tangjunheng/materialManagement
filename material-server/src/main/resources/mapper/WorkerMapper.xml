@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.material.mapper.admin.WorkerMapper">
-    <select id="pageQuery" resultType="com.material.entity.Worker">
+    <select id="pageQuery" resultType="Worker">
         select * from worker
         <where>
             <if test="name != null and name != ''">
@@ -11,7 +11,7 @@
         </where>
         order by create_time desc
     </select>
-    <update id="update" parameterType="com.material.entity.Worker">
+    <update id="update" parameterType="Worker">
         update worker
         <set>
             <if test="name != null">name = #{name},</if>
@@ -25,7 +25,7 @@
         </set>
         where id = #{id}
     </update>
-    <update id="editPassword" parameterType="com.material.entity.Worker">
+    <update id="editPassword" parameterType="Worker">
         update worker
         <set>
             <if test="password != null">password = #{password},</if>

@@ -61,13 +61,14 @@ public class WorkerServiceImpl implements WorkerService {
         // 设置账号的状态，默认正常状态 1表示正常 0表示锁定
         worker.setStatus(StatusConstant.ENABLE);
 
-        // 设置当前记录的创建时间和修改时间
-        worker.setCreateTime(LocalDateTime.now());
-        worker.setUpdateTime(LocalDateTime.now());
-
-        // 设置当前记录创建人id和修改人id
-        worker.setCreateUser(BaseContext.getCurrentId());
-        worker.setUpdateUser(BaseContext.getCurrentId());
+//        以下代码已由AOP通知
+//        // 设置当前记录的创建时间和修改时间
+//        worker.setCreateTime(LocalDateTime.now());
+//        worker.setUpdateTime(LocalDateTime.now());
+//
+//        // 设置当前记录创建人id和修改人id
+//        worker.setCreateUser(BaseContext.getCurrentId());
+//        worker.setUpdateUser(BaseContext.getCurrentId());
 
         workerMapper.insert(worker);
 
@@ -188,12 +189,18 @@ public class WorkerServiceImpl implements WorkerService {
         Worker worker = new Worker();
         BeanUtils.copyProperties(workerDTO, worker);
 
-        worker.setUpdateTime(LocalDateTime.now());
-        worker.setUpdateUser(BaseContext.getCurrentId());
+//        以下代码已由AOP通知
+//        worker.setUpdateTime(LocalDateTime.now());
+//        worker.setUpdateUser(BaseContext.getCurrentId());
 
         workerMapper.update(worker);
     }
 
+    // TODO 邮箱发送验证码修改密码
+    /**
+     * 修改密码
+     * @param workerEditPasswordDTO
+     */
     @Override
     public void editPassword(WorkerEditPasswordDTO workerEditPasswordDTO) {
         Worker worker = new Worker();

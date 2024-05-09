@@ -2,13 +2,11 @@ package com.material.controller.admin;
 
 import com.material.dto.admin.*;
 import com.material.entity.Worker;
-import com.material.properties.JwtProperties;
 import com.material.result.PageResult;
 import com.material.result.Result;
 import com.material.service.admin.WorkerService;
 import com.material.vo.admin.WorkerLoginVO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +21,6 @@ public class WorkerController {
     @Resource
     private WorkerService workerService;
 
-    //jwt配置
-    @Resource
-    private JwtProperties jwtProperties;
 
     /**
      * 新增员工

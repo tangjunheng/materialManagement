@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/admin/material")
@@ -23,6 +25,8 @@ public class MaterialController {
 
     @Resource
     MaterialService materialService;
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 新增物资
@@ -37,6 +41,10 @@ public class MaterialController {
     public Result save(@RequestBody MaterialDTO materialDTO) {
         log.info("新增物资：{}", materialDTO);
         materialService.saveMaterial(materialDTO);
+
+        //清理缓存数据
+        String key = "material_" + materialDTO.getCategoryId();
+        cleanCache(key);
         return Result.success();
     }
 
@@ -64,6 +72,9 @@ public class MaterialController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("物资批量删除：{}", ids);
         materialService.deleteBatch(ids);
+
+        //将所有的菜品缓存数据清理掉，所有以dish_开头的key
+        cleanCache("material_*");
         return Result.success();
     }
 
@@ -100,6 +111,27 @@ public class MaterialController {
     }
 
     /**
+     * 物资物资启用、停用
+     *
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @Operation(
+            description = "物资物资启用、停用",
+            summary = "物资物资启用、停用"
+    )
+    public Result<String> startOrStop(@PathVariable Integer status, Long id) {
+        materialService.startOrStop(status, id);
+
+        //将所有的菜品缓存数据清理掉，所有以material_开头的key
+        cleanCache("material_*");
+
+        return Result.success();
+    }
+
+    /**
      * 根据分类id查询物资
      *
      * @param categoryId
@@ -114,5 +146,14 @@ public class MaterialController {
         log.info("根据分类id查询物资：{}", categoryId);
         List<Material> list = materialService.list(categoryId);
         return Result.success(list);
+    }
+
+    /**
+     * 清理缓存数据
+     * @param pattern
+     */
+    private void cleanCache(String pattern){
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }

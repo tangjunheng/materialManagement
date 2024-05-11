@@ -49,5 +49,11 @@ public interface MaterialService {
      */
     List<Material> list(Long categoryId);
 
-
+    /**
+     * 物资启用、停用
+     *
+     * @param status
+     * @param id
+     */
+    void startOrStop(Integer status, Long id);
 }

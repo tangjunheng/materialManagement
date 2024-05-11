@@ -42,10 +42,21 @@ public class MaterialController {
             summary = "根据分类id查询物资"
     )
     public Result<List<MaterialVO>> list(Long categoryId) {
+        //构造redis中的key，规则：material_分类id
+        String key = "material_" + categoryId;
+
+        //查询redis中是否存在菜品数据
+        List<MaterialVO> materialVOList = (List<MaterialVO>) redisTemplate.opsForValue().get(key);
+        if(materialVOList != null && materialVOList.size() > 0){
+            //如果存在，直接返回，无须查询数据库
+            return Result.success(materialVOList);
+        }
+
+        ////////////////////////////////////////////////////////
         // 根据分类id查询启用中的物资
         List<Material> list = materialService.list(categoryId);
         // 将物资类型转为VO类型
-        List<MaterialVO> materialVOList = new ArrayList<>();
+        materialVOList = new ArrayList<>();
         for (Material m : list) {
             MaterialVO vo = new MaterialVO();
             BeanUtils.copyProperties(m,vo);

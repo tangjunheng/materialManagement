@@ -70,7 +70,7 @@ public interface SetmealMapper {
      * @param id
      * @return
      */
-    SetmealVO getByIdWithDish(Long id);
+    SetmealVO getByIdWithMaterial(Long id);
 
     /**
      * 动态条件(name、category_id、status)查询套餐

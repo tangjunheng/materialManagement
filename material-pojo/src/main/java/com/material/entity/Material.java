@@ -29,7 +29,7 @@ public class Material  implements Serializable {
     // 分类状态 0:禁用，1:启用
     private Integer status;
     // 数量
-    private Integer numbers;
+    private Integer number;
     //创建时间
     private LocalDateTime createTime;
     //更新时间

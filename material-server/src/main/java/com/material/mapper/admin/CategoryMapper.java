@@ -46,7 +46,7 @@ public interface CategoryMapper {
     void update(Category category);
 
     /**
-     * 根据类型（动态）查询分类
+     * 根据类型查询分类
      * @param type
      * @return
      */

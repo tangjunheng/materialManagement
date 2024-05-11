@@ -59,6 +59,8 @@ public class SetmealServiceImpl implements SetmealService {
         //  Lambda 表达式对列表进行遍历
         setmealMaterials.forEach(setmealMaterial -> {
             setmealMaterial.setSetmealId(setmealId);
+            // TODO
+
         });
 
         //保存套餐和菜品的关联关系
@@ -110,15 +112,7 @@ public class SetmealServiceImpl implements SetmealService {
      */
     @Override
     public SetmealVO getByIdWithMaterial(Long setmealId) {
-        // 获取关联表数据
-        Setmeal setmeal = setmealMapper.getById(setmealId);
-        // 根据套餐id获取对应关联表数据
-        List<SetmealMaterial> setmealMaterials = setmealMaterialMapper.getBySetmealId(setmealId);
-
-        // 创建返回值
-        SetmealVO setmealVO = new SetmealVO();
-        BeanUtils.copyProperties(setmeal, setmealVO);
-        setmealVO.setSetmealMaterials(setmealMaterials);
+        SetmealVO setmealVO = setmealMapper.getByIdWithMaterial(setmealId);
 
         return setmealVO;
     }
@@ -140,7 +134,7 @@ public class SetmealServiceImpl implements SetmealService {
         // 获取套餐id
         Long setmealId = setmealDTO.getId();
 
-        // 2、删除套餐和菜品的关联关系，操作setmeal_dish表，执行delete
+        // 2、删除套餐和菜品的关联关系，操作setmeal_material表，执行delete
         setmealMaterialMapper.deleteBySetmealId(setmealId);
 
         // 获取关联表数据
@@ -148,7 +142,7 @@ public class SetmealServiceImpl implements SetmealService {
         setmealDishes.forEach(setmealMaterial -> {
             setmealMaterial.setSetmealId(setmealId);
         });
-        // 3、重新插入套餐和菜品的关联关系，操作setmeal_dish表，执行insert
+        // 3、重新插入套餐和菜品的关联关系，操作setmeal_material表，执行insert
         setmealMaterialMapper.insertBatch(setmealDishes);
     }
 
@@ -162,7 +156,7 @@ public class SetmealServiceImpl implements SetmealService {
     public void startOrStop(Integer status, Long id) {
         //起售套餐时，判断套餐内是否有禁用物资，有禁用物资提示"套餐内包含未启用物资，无法启用"
         if(status == StatusConstant.ENABLE){
-            //select a.* from dish a left join setmeal_dish b on a.id = b.dish_id where b.setmeal_id = ?
+            //select a.* from material a left join setmeal_material b on a.id = b.material_id where b.setmeal_id = ?
             List<Material> dishList = materialMapper.getBySetmealId(id);
             if(dishList != null && dishList.size() > 0){
                 dishList.forEach(dish -> {

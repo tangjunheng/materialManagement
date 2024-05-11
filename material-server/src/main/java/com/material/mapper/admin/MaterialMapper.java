@@ -17,6 +17,15 @@ import java.util.List;
 public interface MaterialMapper {
 
     /**
+     * 根据分类id查询菜品数量
+     *
+     * @param categoryId
+     * @return
+     */
+    @Select("select count(id) from dish where category_id = #{categoryId}")
+    Integer countByCategoryId(Long categoryId);
+
+    /**
      * 物资添加
      * @param material
      */
@@ -66,4 +75,6 @@ public interface MaterialMapper {
      */
     @Select("select a.* from material a left join setmeal_material b on a.id = b.material_id where b.setmeal_id = #{setmealId}")
     List<Material> getBySetmealId(Long setmealId);
+
+
 }

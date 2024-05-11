@@ -2,14 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.material.mapper.admin.SetmealMapper">
-    <resultMap id="setmealAndDishMap" type="com.material.vo.admin.SetmealVO" autoMapping="true">
+    <resultMap id="setmealAndMaterialMap" type="com.material.vo.admin.SetmealVO" autoMapping="true">
         <result column="id" property="id"/>
-        <collection property="setmealMaterials" ofType="Setmealmaterial">
-            <result column="sd_id" property="id"/>
+        <collection property="setmealMaterials" ofType="SetmealMaterial">
+            <result column="sm_id" property="id"/>
             <result column="setmeal_id" property="setmealId"/>
-            <result column="dish_id" property="materialId"/>
-            <result column="sd_name" property="name"/>
-            <result column="sd_price" property="price"/>
+            <result column="material_id" property="materialId"/>
+            <result column="sm_name" property="name"/>
             <result column="copies" property="copies"/>
         </collection>
     </resultMap>
@@ -21,9 +20,6 @@
             </if>
             <if test="categoryId != null">
                 category_id = #{categoryId},
-            </if>
-            <if test="price != null">
-                price = #{price},
             </if>
             <if test="status != null">
                 status = #{status},
@@ -74,17 +70,16 @@
         order by s.create_time desc
     </select>
 
-    <select id="getByIdWithDish" parameterType="long" resultMap="setmealAndDishMap">
+    <select id="getByIdWithMaterial" parameterType="long" resultMap="setmealAndMaterialMap">
         select a.*,
-               b.id    sd_id,
+               b.id    sm_id,
                b.setmeal_id,
-               b.dish_id,
-               b.name  sd_name,
-               b.price sd_price,
+               b.material_id,
+               b.name  sm_name,
                b.copies
         from setmeal a
                  left join
-             setmeal_dish b
+             setmeal_material b
              on
                  a.id = b.setmeal_id
         where a.id = #{id}

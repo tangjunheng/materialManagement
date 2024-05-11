@@ -9,9 +9,7 @@ import com.material.context.BaseContext;
 import com.material.dto.admin.*;
 import com.material.entity.Worker;
 import com.material.constant.MessageConstant;
-import com.material.exception.AccountLockedException;
-import com.material.exception.AccountNotFoundException;
-import com.material.exception.PasswordErrorException;
+import com.material.exception.*;
 import com.material.mapper.admin.WorkerMapper;
 import com.material.properties.JwtProperties;
 import com.material.result.PageResult;
@@ -151,8 +149,11 @@ public class WorkerServiceImpl implements WorkerService {
      * @param status
      * @param id
      */
-    public void startOrStop(Integer status, Long id) {
-
+    public void startOrStop(Long id, Integer status) {
+        // 判断status是否是0或1，如果不是就报错
+        if (status !=0 || status !=1){
+            throw new StatusErrorException(MessageConstant.STATUS_NOT_FOUND);
+        }
         Worker worker = Worker.builder()
                 .status(status)
                 .id(id)
@@ -193,7 +194,10 @@ public class WorkerServiceImpl implements WorkerService {
 //        worker.setUpdateTime(LocalDateTime.now());
 //        worker.setUpdateUser(BaseContext.getCurrentId());
 
-        workerMapper.update(worker);
+        int count = workerMapper.update(worker);
+        if (count == 0) {
+            throw new UpdateFailedException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
     }
 
     // TODO 邮箱发送验证码修改密码
@@ -219,6 +223,9 @@ public class WorkerServiceImpl implements WorkerService {
         // 添加其它属性
         worker.setUpdateTime(LocalDateTime.now());
         worker.setUpdateUser(BaseContext.getCurrentId());
-        workerMapper.editPassword(worker);
+        int count = workerMapper.editPassword(worker);
+        if (count == 0) {
+            throw new UpdateFailedException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
     }
 }

@@ -5,14 +5,14 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into material
-            (name, category_id, image, description,numbers, create_time, update_time, create_user,update_user, status)
-        values (#{name}, #{categoryId}, #{image}, #{description},#{numbes}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser}, #{status})
+            (name, category_id, image, description,number, create_time, update_time, create_user,update_user, status)
+        values (#{name}, #{categoryId}, #{image}, #{description},#{number}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser}, #{status})
     </insert>
     <select id="pageQuery" resultType="com.material.vo.admin.MaterialVO">
         select m.* , c.name as categoryName
         from material m
         left outer join category c
-        on d.category_id = c.id
+        on m.category_id = c.id
         <where>
             <if test="name != null">
                 and m.name like concat('%',#{name},'%')
@@ -34,7 +34,7 @@
             <if test="image != null">image = #{image},</if>
             <if test="description != null">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="numbers != null">numbers = #{number},</if>
+            <if test="number != null">number = #{number},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateUser != null">update_user = #{updateUser},</if>
         </set>

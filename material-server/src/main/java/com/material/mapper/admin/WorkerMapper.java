@@ -54,5 +54,5 @@ public interface WorkerMapper extends BaseMapper {
     @AutoFill(value = OperationType.INSERT)
     int update(Worker worker);
 
-    void editPassword(Worker worker);
+    int editPassword(Worker worker);
 }

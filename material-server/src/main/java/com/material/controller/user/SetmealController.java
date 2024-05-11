@@ -9,6 +9,7 @@ import com.material.vo.user.MaterialItemVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class SetmealController {
             description = "根据分类id查询套餐",
             summary = "根据分类id查询套餐"
     )
+    @Cacheable(cacheNames = "setmealCache",key = "#categoryId") //key: setmealCache::100
     public Result<List<Setmeal>> list(Long categoryId) {
         Setmeal setmeal = new Setmeal();
         setmeal.setCategoryId(categoryId);

@@ -81,7 +81,7 @@ public class WorkerController {
     )
     public Result<PageResult> page(WorkerPageQueryDTO workerPageQueryDTO){
         log.info("员工分页查询，参数为：{}", workerPageQueryDTO);
-        PageResult pageResult = workerService.pageQuery(workerPageQueryDTO);//后续定义
+        PageResult pageResult = workerService.pageQuery(workerPageQueryDTO);
         return Result.success(pageResult);
     }
 
@@ -96,9 +96,9 @@ public class WorkerController {
             description = "启动禁用员工账号",
             summary = "启动禁用员工账号"
     )
-    public Result startOrStop(@PathVariable Integer status,Long id){
-        log.info("启用禁用员工账号：{},{}",status,id);
-        workerService.startOrStop(status,id);
+    public Result startOrStop(@PathVariable Long id, Integer status){
+        log.info("启用禁用员工账号：{},{}",id,status);
+        workerService.startOrStop(id,status);
         // 如果修改的行数为0，返回错误信息
 
         return Result.success();

@@ -23,6 +23,6 @@ public class MaterialPageQueryDTO implements Serializable {
     private Integer status;
 
     // 数量
-    private Integer numbers;
+    private Integer number;
 
 }

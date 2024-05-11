@@ -3,17 +3,20 @@ package com.material.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.material.constant.MessageConstant;
 import com.material.constant.StatusConstant;
 import com.material.dto.admin.CategoryDTO;
 import com.material.dto.admin.CategoryPageQueryDTO;
 import com.material.entity.Category;
+import com.material.exception.DeletionNotAllowedException;
 import com.material.mapper.admin.CategoryMapper;
+import com.material.mapper.admin.MaterialMapper;
+import com.material.mapper.admin.SetmealMapper;
 import com.material.result.PageResult;
 import com.material.service.admin.CategoryService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +26,12 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     @Resource
     private CategoryMapper categoryMapper;
+
+    @Resource
+    private MaterialMapper materialMapper;
+
+    @Resource
+    private SetmealMapper setmealMapper;
 
 
     /**
@@ -63,7 +72,22 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id
      */
     public void deleteById(Long id) {
+        //查询当前分类是否关联了物资，如果关联了就抛出业务异常
+        Integer count = materialMapper.countByCategoryId(id);
+        if(count > 0){
+            //当前分类下有物资，不能删除
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_MATERIAL);
+        }
 
+        //查询当前分类是否关联了套餐，如果关联了就抛出业务异常
+        count = setmealMapper.countByCategoryId(id);
+        if(count > 0){
+            //当前分类下有套餐，不能删除
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
+        }
+
+        //删除分类数据
+        categoryMapper.deleteById(id);
     }
 
     /**

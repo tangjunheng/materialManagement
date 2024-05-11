@@ -9,6 +9,7 @@ import com.material.dto.admin.CategoryDTO;
 import com.material.dto.admin.CategoryPageQueryDTO;
 import com.material.entity.Category;
 import com.material.exception.DeletionNotAllowedException;
+import com.material.exception.StatusErrorException;
 import com.material.mapper.admin.CategoryMapper;
 import com.material.mapper.admin.MaterialMapper;
 import com.material.mapper.admin.SetmealMapper;
@@ -111,6 +112,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id
      */
     public void startOrStop(Integer status, Long id) {
+        // 判断status是否是0或1，如果不是就报错
+        if (!status.equals(StatusConstant.DISABLE) && !status.equals(StatusConstant.ENABLE)){
+            throw new StatusErrorException(MessageConstant.STATUS_NOT_FOUND);
+        }
         Category category = Category.builder()
                 .id(id)
                 .status(status)

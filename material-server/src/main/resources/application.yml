@@ -7,6 +7,10 @@ spring:
   #（文件名需满足application-{profile}.yml的格式）
   profiles:
     active: druid,email,openapi,redis,secret
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 # MyBatis Plus 的配置
 mybatis-plus:

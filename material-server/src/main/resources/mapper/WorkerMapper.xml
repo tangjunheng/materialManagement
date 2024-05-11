@@ -29,6 +29,7 @@
         update worker
         <set>
             <if test="password != null">password = #{password},</if>
+            <if test="salt != null">salt = #{salt},</if>
         </set>
         where id = #{id}
     </update>

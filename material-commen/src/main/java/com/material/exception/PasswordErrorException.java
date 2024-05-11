@@ -8,5 +8,6 @@ public class PasswordErrorException extends BaseException {
     public PasswordErrorException() {
     }
     public PasswordErrorException(String passwordError) {
+        super(passwordError);
     }
 }

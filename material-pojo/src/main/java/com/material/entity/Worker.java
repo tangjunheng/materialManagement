@@ -3,6 +3,7 @@ package com.material.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class Worker implements Serializable {
     private String username;
 
     private String password;
-
+    @JsonIgnore
     private String salt;
 
     private String phone;

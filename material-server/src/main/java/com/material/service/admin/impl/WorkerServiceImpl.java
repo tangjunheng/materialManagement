@@ -151,7 +151,7 @@ public class WorkerServiceImpl implements WorkerService {
      */
     public void startOrStop(Long id, Integer status) {
         // 判断status是否是0或1，如果不是就报错
-        if (status !=0 || status !=1){
+        if (!status.equals(StatusConstant.DISABLE) && !status.equals(StatusConstant.ENABLE)){
             throw new StatusErrorException(MessageConstant.STATUS_NOT_FOUND);
         }
         Worker worker = Worker.builder()

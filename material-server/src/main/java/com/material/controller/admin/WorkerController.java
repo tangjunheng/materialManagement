@@ -96,7 +96,7 @@ public class WorkerController {
             description = "启动禁用员工账号",
             summary = "启动禁用员工账号"
     )
-    public Result startOrStop(@PathVariable Long id, Integer status){
+    public Result startOrStop(Long id, @PathVariable Integer status){
         log.info("启用禁用员工账号：{},{}",id,status);
         workerService.startOrStop(id,status);
         // 如果修改的行数为0，返回错误信息
@@ -140,8 +140,8 @@ public class WorkerController {
 
     @PutMapping("/editPassword")
     @Operation(
-            description = "编辑员工信息",
-            summary = "编辑员工信息"
+            description = "修改员工密码",
+            summary = "修改员工密码"
     )
     public Result editPassword(@RequestBody WorkerEditPasswordDTO workerEditPasswordDTO){
         log.info("修改员工密码：{}", workerEditPasswordDTO);

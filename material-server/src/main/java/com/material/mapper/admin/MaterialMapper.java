@@ -16,7 +16,7 @@ import java.util.List;
 public interface MaterialMapper {
 
     /**
-     * 根据分类id查询菜品数量
+     * 根据分类id查询物资数量
      *
      * @param categoryId
      * @return

@@ -25,7 +25,7 @@ public class SetmealController {
     @Resource
     private SetmealService setmealService;
 
-    @PostMapping
+    @PostMapping("/add")
     @Operation(
             description = "新增套餐",
             summary = "新增套餐"
@@ -57,7 +57,7 @@ public class SetmealController {
      * @param ids
      * @return
      */
-    @DeleteMapping
+    @DeleteMapping("/delete")
     @Operation(
             description = "批量删除套餐",
             summary = "批量删除套餐"
@@ -90,7 +90,7 @@ public class SetmealController {
      * @param setmealDTO
      * @return
      */
-    @PutMapping
+    @PutMapping("/update")
     @Operation(
             description = "修改套餐",
             summary = "修改套餐"

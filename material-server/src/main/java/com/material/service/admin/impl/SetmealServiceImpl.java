@@ -10,7 +10,9 @@ import com.material.entity.Material;
 import com.material.entity.Setmeal;
 import com.material.entity.SetmealMaterial;
 import com.material.exception.DeletionNotAllowedException;
+import com.material.exception.MaterialNotFoundException;
 import com.material.exception.SetmealEnableFailedException;
+import com.material.exception.StatusErrorException;
 import com.material.mapper.admin.MaterialMapper;
 import com.material.mapper.admin.SetmealMapper;
 import com.material.mapper.admin.SetmealMaterialMapper;
@@ -24,6 +26,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -47,6 +51,7 @@ public class SetmealServiceImpl implements SetmealService {
     public void saveWithMaterial(SetmealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
+        // TODO 先验证分类是否对应得上
 
         // 向套餐表插入数据
         setmealMapper.insert(setmeal);
@@ -56,11 +61,29 @@ public class SetmealServiceImpl implements SetmealService {
 
         // 获取需要绑定的套餐物资数据
         List<SetmealMaterial> setmealMaterials = setmealDTO.getSetmealMaterials();
-        //  Lambda 表达式对列表进行遍历
+        // 获取materials对应ids
+        List<Long> MaterialIds = new LinkedList<>();
+        for (SetmealMaterial setmealMaterial : setmealMaterials){
+            MaterialIds.add(setmealMaterial.getMaterialId());
+        }
+        // 查询物资信息
+        List<Material> materials = materialMapper.getByIds(MaterialIds);
+        // 判断物资是否存在
+        if (materials.size() < setmealMaterials.size()) {
+            throw new MaterialNotFoundException(MessageConstant.MATERIAL_NOT_FOUND);
+        }
+        //  Lambda 表达式对关联表进行遍历
         setmealMaterials.forEach(setmealMaterial -> {
+            int i=0;
+            // 添加套餐id
             setmealMaterial.setSetmealId(setmealId);
-            // TODO
-
+            // 添加物资id
+            setmealMaterial.setMaterialId(materials.get(i).getId());
+            // 添加物资数量
+            setmealMaterial.setCopies(materials.get(i).getNumber());
+            // 添加物资名称
+            setmealMaterial.setName(materials.get(i).getName());
+            i++;
         });
 
         //保存套餐和菜品的关联关系
@@ -127,6 +150,7 @@ public class SetmealServiceImpl implements SetmealService {
     public void update(SetmealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
+        // TODO 先验证分类是否对应得上
 
         // 1、修改套餐表，执行update
         setmealMapper.update(setmeal);
@@ -137,13 +161,36 @@ public class SetmealServiceImpl implements SetmealService {
         // 2、删除套餐和菜品的关联关系，操作setmeal_material表，执行delete
         setmealMaterialMapper.deleteBySetmealId(setmealId);
 
+        // 2.5、获取需要绑定的套餐物资数据
         // 获取关联表数据
-        List<SetmealMaterial> setmealDishes = setmealDTO.getSetmealMaterials();
-        setmealDishes.forEach(setmealMaterial -> {
+        List<SetmealMaterial> setmealMaterials = setmealDTO.getSetmealMaterials();
+        // 获取materials对应ids
+        List<Long> MaterialIds = new LinkedList<>();
+        for (SetmealMaterial setmealMaterial : setmealMaterials){
+            MaterialIds.add(setmealMaterial.getMaterialId());
+        }
+        // 查询物资信息
+        List<Material> materials = materialMapper.getByIds(MaterialIds);
+        // 判断物资是否存在
+        if (materials.size() < setmealMaterials.size()) {
+            throw new MaterialNotFoundException(MessageConstant.MATERIAL_NOT_FOUND);
+        }
+
+
+        setmealMaterials.forEach(setmealMaterial -> {
+            int i=0;
+            // 添加套餐id
             setmealMaterial.setSetmealId(setmealId);
+            // 添加物资id
+            setmealMaterial.setMaterialId(materials.get(i).getId());
+            // 添加物资数量
+            setmealMaterial.setCopies(materials.get(i).getNumber());
+            // 添加物资名称
+            setmealMaterial.setName(materials.get(i).getName());
+            i++;
         });
         // 3、重新插入套餐和菜品的关联关系，操作setmeal_material表，执行insert
-        setmealMaterialMapper.insertBatch(setmealDishes);
+        setmealMaterialMapper.insertBatch(setmealMaterials);
     }
 
     /**
@@ -154,13 +201,20 @@ public class SetmealServiceImpl implements SetmealService {
      */
     @Override
     public void startOrStop(Integer status, Long id) {
+        // 判断status是否是0或1，如果不是就报错
+        if (!status.equals(StatusConstant.DISABLE) && !status.equals(StatusConstant.ENABLE)){
+            throw new StatusErrorException(MessageConstant.STATUS_NOT_FOUND);
+        }
+
         //起售套餐时，判断套餐内是否有禁用物资，有禁用物资提示"套餐内包含未启用物资，无法启用"
-        if(status == StatusConstant.ENABLE){
+        if(status.equals(StatusConstant.ENABLE)){
             //select a.* from material a left join setmeal_material b on a.id = b.material_id where b.setmeal_id = ?
-            List<Material> dishList = materialMapper.getBySetmealId(id);
-            if(dishList != null && dishList.size() > 0){
-                dishList.forEach(dish -> {
-                    if(StatusConstant.DISABLE == dish.getStatus()){
+            // 获取物资信息
+            List<Material> materialList = materialMapper.getBySetmealId(id);
+            // 判断套餐内是否有禁用物资
+            if(materialList != null && materialList.size() > 0){
+                materialList.forEach(dish -> {
+                    if(dish.getStatus().equals(StatusConstant.DISABLE)){
                         throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
                     }
                 });

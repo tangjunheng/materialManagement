@@ -26,7 +26,7 @@ public interface SetmealMaterialMapper {
      * 根据套餐id删除所有和该套餐相关的关联数据
      * @param setmealId
      */
-    @Delete("delete from setmeal_dish where setmeal_id = #{setmealId}")
+    @Delete("delete from setmeal_material where setmeal_id = #{setmealId}")
     void deleteBySetmealId(Long setmealId);
 
     /**

@@ -24,8 +24,8 @@ material:
   jwt:
     # 设置jwt签名加密时使用的秘钥
     admin-secret-key: ${material.jwt.admin-secret-key}
-    # 设置jwt过期时间
-    admin-ttl: 7200000
+    # 设置jwt过期时间单位(这里是小时，需要在material-commen/src/main/java/com/material/utils/JwtUtil.java修改对应时间倍数)
+    admin-ttl: 3600000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
     user-secret-key: ${material.jwt.user-secret-key}

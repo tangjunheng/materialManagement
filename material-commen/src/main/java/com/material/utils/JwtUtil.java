@@ -24,10 +24,10 @@ public class JwtUtil {
      * @return
      */
     public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {
-        //指定加密算法
+        // 指定签名的时候使用的签名算法，也就是header那部分
         SecureDigestAlgorithm<SecretKey, SecretKey> algorithm = Jwts.SIG.HS256;
-        //生成JWT的时间
-        long expMillis = System.currentTimeMillis()+ttlMillis;
+        // 生成JWT的时间
+        long expMillis = System.currentTimeMillis()+ttlMillis*24*7;
         Date exp = new Date(expMillis);
         //密钥实例
         SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
@@ -35,9 +35,9 @@ public class JwtUtil {
         String compact = Jwts.builder()
                 .signWith(key, algorithm) //设置签名使用的签名算法和签名使用的秘钥
                 //如果有私有声明，一点要先设置这个自己创建的私有的声明，这个是给builder的claims赋值，一旦卸载标准的声明赋值之后，就是覆盖了那些标准的声明的
-                .expiration(exp)
-                .claims(claims) //设置自定义负载信息
-                .compact();//设置过期时间
+                .expiration(exp)// 设置过期时间
+                .claims(claims) // 设置自定义负载信息
+                .compact();
         return compact;
 
     }

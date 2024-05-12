@@ -27,7 +27,7 @@ public class MaterialVO {
     // 0 启用 1 停用
     private Integer status;
     // 数量
-    private Integer numbers;
+    private Integer number;
     // 更新时间
     private LocalDateTime updateTime;
     // 分类名称

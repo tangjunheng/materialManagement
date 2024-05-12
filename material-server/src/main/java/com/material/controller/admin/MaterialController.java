@@ -49,7 +49,7 @@ public class MaterialController {
     }
 
     /**
-     * 物资分页查询
+     * 根据分类分页查询物资
      * @param materialPageQueryDTO
      * @return
      */
@@ -60,7 +60,7 @@ public class MaterialController {
     )
     public Result<PageResult> page(MaterialPageQueryDTO materialPageQueryDTO) {
         log.info("物资分页查询:{}", materialPageQueryDTO);
-        PageResult pageResult = materialService.pageQuery(materialPageQueryDTO);//后绪步骤定义
+        PageResult pageResult = materialService.pageQuery(materialPageQueryDTO);
         return Result.success(pageResult);
     }
 
@@ -80,32 +80,32 @@ public class MaterialController {
 
     /**
      * 根据id查询物资
-     * @param id
+     * @param ids
      * @return
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{ids}")
     @Operation(
             description = "根据id查询物资",
             summary = "根据id查询物资"
     )
-    public Result<MaterialVO> getById(@PathVariable Long id) {
-        log.info("根据id查询物资：{}", id);
-        MaterialVO materialVO = materialService.getById(id);
-        return Result.success(materialVO);
+    public Result<List<MaterialVO>> getById(@PathVariable List<Long> ids) {
+        log.info("根据id查询物资：{}", ids);
+        List<MaterialVO> materialVOs = materialService.getById(ids);
+        return Result.success(materialVOs);
     }
 
     /**
-     * 修改物资信息
+     * 根据id修改物资信息
      * @param materialDTO
      * @return
      */
     @PutMapping
     @Operation(
-            description = "修改物资信息",
-            summary = "修改物资信息"
+            description = "根据id修改物资信息",
+            summary = "根据id修改物资信息"
     )
     public Result update(@RequestBody MaterialDTO materialDTO) {
-        log.info("修改物资信息：{}", materialDTO);
+        log.info("根据id修改物资信息：{}", materialDTO);
         materialService.update(materialDTO);
         return Result.success();
     }
@@ -122,13 +122,13 @@ public class MaterialController {
             description = "物资物资启用、停用",
             summary = "物资物资启用、停用"
     )
-    public Result<String> startOrStop(@PathVariable Integer status, Long id) {
-        materialService.startOrStop(status, id);
+    public Result<List<Long>> startOrStop(@PathVariable Integer status, Long id) {
+        List<Long> setmealIds = materialService.startOrStop(status, id);
 
         //将所有的菜品缓存数据清理掉，所有以material_开头的key
         cleanCache("material_*");
 
-        return Result.success();
+        return Result.success(setmealIds);
     }
 
     /**

@@ -14,11 +14,11 @@ public interface SetmealMaterialMapper {
     /**
      * 根据菜品id查询对应的套餐id
      *
-     * @param dishIds
+     * @param materialIds
      * @return
      */
-    //select setmeal_id from setmeal_dish where dish_id in (1,2,3,4)
-    List<Long> getSetmealIdsByDishIds(List<Long> dishIds);
+    //select setmeal_id from setmeal_material where dish_id in (1,2,3,4)
+    List<Long> getSetmealIdsByMaterialIds(List<Long> materialIds);
 
     void insertBatch(List<SetmealMaterial> setmealMaterials);
 

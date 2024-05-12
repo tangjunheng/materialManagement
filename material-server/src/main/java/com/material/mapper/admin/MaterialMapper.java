@@ -7,7 +7,6 @@ import com.material.dto.admin.MaterialPageQueryDTO;
 import com.material.entity.Material;
 import com.material.enumeration.OperationType;
 import com.material.vo.admin.MaterialVO;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -40,26 +39,25 @@ public interface MaterialMapper {
     Page<MaterialVO> pageQuery(MaterialPageQueryDTO materialPageQueryDTO);
 
     /**
-     * 根据id获取物资信息
-     * @param id
+     * 根据物资id批量获取物资信息
+     * @param materialIds
      * @return
      */
-    @Select("select * from material where id = #{id}")
-    Material getById(Long id);
+    List<Material> getByIds(List<Long> materialIds);
 
     /**
      * 根据id删除物资
-     * @param id
+     * @param materialIds
      */
-    @Delete("delete from material where id = #{id}")
-    void deleteById(Long id);
+
+    void deleteByIds(List<Long> materialIds);
 
     /**
      * 根据物资id动态修改物资数据
      * @param material
      */
     @AutoFill(value = OperationType.UPDATE)
-    void update(Material material);
+    int update(Material material);
 
     /**
      * 动态条件查询已启用的物资信息

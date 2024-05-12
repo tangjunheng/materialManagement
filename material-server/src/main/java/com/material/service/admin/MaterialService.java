@@ -25,16 +25,17 @@ public interface MaterialService {
 
     /**
      * 物资批量删除
-     * @param ids
+     * @param materialIds
      */
-    void deleteBatch(List<Long> ids);
+    void deleteBatch(List<Long> materialIds);
 
     /**
      * 根据物资id查询物资
-     * @param id
+     *
+     * @param materialIds
      * @return
      */
-    MaterialVO getById(Long id);
+    List<MaterialVO> getById(List<Long> materialIds);
 
     /**
      * 根据id修改物资基本信息
@@ -55,5 +56,5 @@ public interface MaterialService {
      * @param status
      * @param id
      */
-    void startOrStop(Integer status, Long id);
+    List<Long> startOrStop(Integer status, Long id);
 }

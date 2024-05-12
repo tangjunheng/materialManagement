@@ -22,7 +22,5 @@ public class MaterialPageQueryDTO implements Serializable {
     // 状态 0表示禁用 1表示启用
     private Integer status;
 
-    // 数量
-    private Integer number;
 
 }

@@ -30,7 +30,7 @@ public class User implements Serializable {
     //性别 0 女 1 男
     private String sex;
 
-    //身份证号
+    // 学号
     private String idNumber;
 
     //头像

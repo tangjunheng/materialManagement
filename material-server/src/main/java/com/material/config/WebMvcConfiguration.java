@@ -62,10 +62,10 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                         .description("这是基于Knife4j OpenApi3的物资管理系统的接口文档") // 接口文档简介
                         .version("1.0")  // 接口文档版本
                         .contact(new Contact()
-                                .name("Thomas") //开发者
-                                .email("1761174609@qq.com")
+                                .name("Thomas") // 开发者
+                                .email("1761174609@qq.com")// 开发者联系方式
                         )
-                ); // 开发者联系方式
+                );
     }
     /**
      * 添加静态资源映射
@@ -78,8 +78,10 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     /**
      * 扩展Spring MVC框架的消息转化器
-     * @param converters
+     * 这个是导致knife4j不能正常显示的罪魁祸首,特别要注意添加的位置
+     * @param converters 消息转换器列表
      */
+    @Override
     protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.info("扩展消息转换器...");
         //创建一个消息转换器对象
@@ -87,6 +89,6 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         //需要为消息转换器设置一个对象转换器，对象转换器可以将Java对象序列化为json数据
         converter.setObjectMapper(new JacksonObjectMapper());
         //将自己的消息转化器加入容器中
-        converters.add(0,converter);
+        converters.add(converters.size()-1,converter);
     }
 }

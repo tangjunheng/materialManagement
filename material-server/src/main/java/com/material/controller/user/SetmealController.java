@@ -35,7 +35,7 @@ public class SetmealController {
             description = "根据分类id查询套餐",
             summary = "根据分类id查询套餐"
     )
-    @Cacheable(cacheNames = "setmealCache",key = "#categoryId") //key: setmealCache::100
+    @Cacheable(cacheNames = "setmealCache",key = "#categoryId") //key: setmealCache::23
     public Result<List<Setmeal>> list(Long categoryId) {
         Setmeal setmeal = new Setmeal();
         setmeal.setCategoryId(categoryId);

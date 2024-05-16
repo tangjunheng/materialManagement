@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     public User wxLogin(UserLoginDTO userLoginDTO) throws JsonProcessingException {
         String openid = getOpenid(userLoginDTO.getCode());
 
-        //判断openid是否为空，如果为空表示登录失败，抛出业务异常
+        // 判断openid是否为空，如果为空表示登录失败，抛出业务异常
         if(openid == null){
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
         }
@@ -76,6 +76,15 @@ public class UserServiceImpl implements UserService {
         String json = HttpClientUtil.doGet(WX_LOGIN, map);
 
         JsonNode jsonNode = objectMapper.readTree(json);
+        // 当请求返回错误时的处理
+        if (jsonNode.get("errcode") != null) {
+            // errcode为40163时，是code已经被使用了的错误
+            if (jsonNode.get("errcode").asInt() == 40163){
+                throw new LoginFailedException(MessageConstant.CODE_BEEN_USED);
+            }
+
+            throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
+        }
         String openid = jsonNode.get("openid").asText();
         return openid;
     }

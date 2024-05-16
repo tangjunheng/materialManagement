@@ -46,11 +46,11 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
         //2、校验令牌
         try {
-            log.info("jwt校验:{}", token);
+            log.info("员工jwt校验:{}", token);
             // 密钥解密
             Jws<Claims> claimsJws = JwtUtil.parseJWT(token, jwtProperties.getAdminSecretKey());
             Long farId = Long.valueOf(claimsJws.getPayload().get(JwtClaimsConstant.WORK_ID).toString());
-            log.info("当前用户id:{}",farId);
+            log.info("当前员工id:{}",farId);
             BaseContext.setCurrentId(farId); //设置当前登录的用户id
             //放行
             return true;

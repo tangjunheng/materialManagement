@@ -32,19 +32,5 @@ public class WorkerRegisterDTO implements Serializable {
     private String sex;
 
 
-    @Data
-    public static class MaterialDTO implements Serializable {
 
-        private Long id;
-        // 物资名称
-        private String name;
-        // 物资分类id
-        private Long categoryId;
-        //图片
-        private String image;
-        //描述信息
-        private String description;
-        // 状态 0:禁用，1:启用
-        private Integer status;
-    }
 }

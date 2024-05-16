@@ -4,7 +4,7 @@ spring:
     redis:
       host: 43.139.192.182
       port: 6379
-      database: 1
+      database: 0
       password: thomas666 #默认为空
       timeout: 3000ms
       lettuce:

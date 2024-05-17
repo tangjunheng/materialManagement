@@ -1,10 +1,13 @@
 package com.material.service.user.impl;
 
+import com.material.constant.MessageConstant;
 import com.material.context.BaseContext;
 import com.material.dto.user.ShoppingCartDTO;
+import com.material.dto.user.ShoppingSetmealMaterialDTO;
 import com.material.entity.Material;
 import com.material.entity.Setmeal;
 import com.material.entity.ShoppingCart;
+import com.material.exception.ParametersException;
 import com.material.mapper.admin.MaterialMapper;
 import com.material.mapper.admin.SetmealMapper;
 import com.material.mapper.user.ShoppingCartMapper;
@@ -34,6 +37,10 @@ public class shoppingCartServiceImpl implements ShoppingCartService {
      * @param shoppingCartDTO
      */
     public void addShoppingCart(ShoppingCartDTO shoppingCartDTO) {
+        // 禁止两种数据同时有或同时无，抛出参数错误异常
+        if ((shoppingCartDTO.getMaterialId() !=null && shoppingCartDTO.getSetmealId() !=null) || (shoppingCartDTO.getMaterialId() ==null && shoppingCartDTO.getSetmealId() ==null)){
+            throw new ParametersException(MessageConstant.PARAMETERS_ERROR);
+        }
         ShoppingCart shoppingCart = new ShoppingCart();
         BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
         //只能查询自己的购物车数据
@@ -44,13 +51,15 @@ public class shoppingCartServiceImpl implements ShoppingCartService {
 
         if (shoppingCartList != null && shoppingCartList.size() == 1) {
             //如果已经存在，就更新数量，将请求的数量加上去
-            // TODO 对请求数量进行限定，超过最大值就用最大值
-            // 1.获取当前物资/套餐的关联数据
-            // 2.如果是物资的话，查看购物车中关联的套餐的数量，关联的套餐数量*关联的copies+购物车中原有的物资数量+请求的物资的数量<=物资的总量
-            // 3.如果是套餐的话，查看购物车中关联的物资的数量，关联的物资数量+原有套餐数量*关联的copies+购物车中其它与该物资相关联的套餐*copies+请求的套餐数量*copies<=物资的总量
             shoppingCart = shoppingCartList.get(0);
             shoppingCart.setNumber(shoppingCart.getNumber() + shoppingCartDTO.getNumber());
             shoppingCartMapper.updateNumberById(shoppingCart);
+            // TODO 对请求数量进行限定，超过能请求的最大值就用最大值（对于这个功能优化，感觉需要重新构建数据库才行）
+            // TODO 预设方案（感觉请求太多了）：
+            // TODO 1.获取当前请求添加的物资/套餐对应购物车的的数量
+            // TODO 2.如果是物资的话，获取购物车中关联的所有套餐（有n个），每个关联的套餐的数量*关联的copies+购物车中原有的物资数量+请求的物资的数量<=物资的总量
+            // TODO 3.如果是套餐的话，查看购物车中关联的所有物资（有n个），对于一种每个关联的物资，关联的物资数量+原有套餐数量*关联的copies+购物车中其它与这个物资关联的套餐*copies+请求的套餐数量*copies<=这个物资的总量
+
         } else {
             //如果不存在，插入数据，数量就是请求的数量
 
@@ -97,6 +106,15 @@ public class shoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void cleanShoppingCart() {
         shoppingCartMapper.deleteByUserId(BaseContext.getCurrentId());
+    }
+
+    // TODO 根据用户id获取购物车某物资的所有数量（此函数用于前面的增加购物车的优化）
+    private int getCurrentMaterialQuantity(ShoppingCartDTO shoppingCartDTO) {
+        if (shoppingCartDTO.getSetmealId() != null) {
+            // 当是添加的是套餐时，获取购物车中所有该套餐对应的物资id与数量
+            shoppingCartMapper.getShoppingSetmealMaterialsById(shoppingCartDTO);
+        }
+        return 0;
     }
 
 }

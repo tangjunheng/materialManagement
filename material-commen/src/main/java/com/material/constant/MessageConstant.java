@@ -27,4 +27,5 @@ public class MessageConstant {
     public static final String MATERIAL_BE_RELATED_BY_SETMEAL = "当前物资关联了套餐,不能删除";
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
+    public static final String PARAMETERS_ERROR = "参数错误";
 }

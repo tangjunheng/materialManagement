@@ -1,5 +1,7 @@
 package com.material.mapper.user;
 
+import com.material.dto.user.ShoppingCartDTO;
+import com.material.dto.user.ShoppingSetmealMaterialDTO;
 import com.material.entity.ShoppingCart;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -31,8 +33,8 @@ public interface ShoppingCartMapper {
      *
      * @param shoppingCart
      */
-    @Insert("insert into shopping_cart (name, user_id, dish_id, setmeal_id, number, image, create_time) " +
-            " values (#{name},#{userId},#{dishId},#{setmealId},#{number},#{image},#{createTime})")
+    @Insert("insert into shopping_cart (name, user_id, material_id, setmeal_id, number, image, create_time) " +
+            " values (#{name},#{userId},#{materialId},#{setmealId},#{number},#{image},#{createTime})")
     void insert(ShoppingCart shoppingCart);
 
     /**
@@ -42,4 +44,7 @@ public interface ShoppingCartMapper {
      */
     @Delete("delete from shopping_cart where user_id = #{userId}")
     void deleteByUserId(Long userId);
+
+
+    List<ShoppingSetmealMaterialDTO> getShoppingSetmealMaterialsById(ShoppingCartDTO shoppingCartDTO);
 }

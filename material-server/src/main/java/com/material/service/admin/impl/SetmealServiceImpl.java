@@ -225,7 +225,7 @@ public class SetmealServiceImpl implements SetmealService {
     }
 
     /**
-     * 根据id查询菜品选项
+     * 根据套餐id查询物资选项
      *
      * @param id
      * @return

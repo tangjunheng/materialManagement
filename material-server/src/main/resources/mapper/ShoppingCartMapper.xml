@@ -12,7 +12,30 @@
             <if test="setmealId != null">
                 and setmeal_id = #{setmealId}
             </if>
-            <if test="dishId != null">
+            <if test="materialId != null">
+                and material_id = #{materialId}
+            </if>
+        </where>
+    </select>
+    <select id="getShoppingSetmealMaterialsById" resultType="com.material.dto.user.ShoppingSetmealMaterialDTO">
+        select sc.number, sm.setmeal_id, sm.material_id, sm.copies
+        from shopping_cart sc
+        left join setmeal_material sm
+        on
+        <if test="materialId != null">
+            sc.material_id = sm.material_id
+        </if>
+        <if test="setmealId != null">
+            sc.setmeal_id = sm.setmeal_id
+        </if>
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="setmealId != null">
+                and setmeal_id = #{setmealId}
+            </if>
+            <if test="materialId != null">
                 and material_id = #{materialId}
             </if>
         </where>

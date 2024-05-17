@@ -46,17 +46,17 @@ public class SetmealController {
     }
 
     /**
-     * 根据套餐id查询包含的菜品列表
+     * 根据套餐id查询包含的物资列表
      *
      * @param id
      * @return
      */
-    @GetMapping("/dish/{id}")
+    @GetMapping("/material/{id}")
     @Operation(
             description = "根据套餐id查询包含的物资列表",
             summary = "根据套餐id查询包含的物资列表"
     )
-    public Result<List<MaterialItemVO>> dishList(@PathVariable("id") Long id) {
+    public Result<List<MaterialItemVO>> materialList(@PathVariable("id") Long id) {
         List<MaterialItemVO> list = setmealService.getMaterialItemById(id);
         return Result.success(list);
     }

@@ -74,19 +74,11 @@ public class SetmealServiceImpl implements SetmealService {
         }
         //  Lambda 表达式对关联表进行遍历
         setmealMaterials.forEach(setmealMaterial -> {
-            int i=0;
             // 添加套餐id
             setmealMaterial.setSetmealId(setmealId);
-            // 添加物资id
-            setmealMaterial.setMaterialId(materials.get(i).getId());
-            // 添加物资数量
-            setmealMaterial.setCopies(materials.get(i).getNumber());
-            // 添加物资名称
-            setmealMaterial.setName(materials.get(i).getName());
-            i++;
         });
 
-        //保存套餐和菜品的关联关系
+        //保存套餐和物资的关联关系
         setmealMaterialMapper.insertBatch(setmealMaterials);
     }
 
@@ -178,16 +170,8 @@ public class SetmealServiceImpl implements SetmealService {
 
 
         setmealMaterials.forEach(setmealMaterial -> {
-            int i=0;
             // 添加套餐id
             setmealMaterial.setSetmealId(setmealId);
-            // 添加物资id
-            setmealMaterial.setMaterialId(materials.get(i).getId());
-            // 添加物资数量
-            setmealMaterial.setCopies(materials.get(i).getNumber());
-            // 添加物资名称
-            setmealMaterial.setName(materials.get(i).getName());
-            i++;
         });
         // 3、重新插入套餐和菜品的关联关系，操作setmeal_material表，执行insert
         setmealMaterialMapper.insertBatch(setmealMaterials);

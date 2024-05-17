@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController("userDishController")
@@ -56,12 +57,15 @@ public class MaterialController {
         // 根据分类id查询启用中的物资
         List<Material> list = materialService.list(categoryId);
         // 将物资类型转为VO类型
-        materialVOList = new ArrayList<>();
+        materialVOList = new LinkedList<>();
         for (Material m : list) {
             MaterialVO vo = new MaterialVO();
             BeanUtils.copyProperties(m,vo);
             materialVOList.add(vo);
         }
+
+        // 如果redis不存在，查询数据库，将查询到的数据放入redis中
+        redisTemplate.opsForValue().set(key,materialVOList);
 
         return Result.success(materialVOList);
     }

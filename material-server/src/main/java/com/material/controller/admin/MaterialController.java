@@ -73,7 +73,7 @@ public class MaterialController {
         log.info("物资批量删除：{}", ids);
         materialService.deleteBatch(ids);
 
-        //将所有的菜品缓存数据清理掉，所有以dish_开头的key
+        //将所有的菜品缓存数据清理掉，所有以material_开头的key
         cleanCache("material_*");
         return Result.success();
     }
@@ -125,7 +125,7 @@ public class MaterialController {
     public Result<List<Long>> startOrStop(@PathVariable Integer status, Long id) {
         List<Long> setmealIds = materialService.startOrStop(status, id);
 
-        //将所有的菜品缓存数据清理掉，所有以material_开头的key
+        // 将所有的物资缓存数据清理掉，所有以material_开头的key
         cleanCache("material_*");
 
         return Result.success(setmealIds);

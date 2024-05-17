@@ -9,7 +9,7 @@ spring:
       timeout: 3000ms
       lettuce:
         pool:
-          max-active: 20  # 最大连接数，负值表示没有限制，默认8
+          max-active: 30  # 最大连接数，负值表示没有限制，默认8
           max-wait: -1    # 最大阻塞等待时间，负值表示没限制，默认-1
-          max-idle: 8     # 最大空闲连接，默认8
-          min-idle: 0     # 最小空闲连接，默认0
+          max-idle: 20     # 最大空闲连接，默认8
+          min-idle: 10     # 最小空闲连接，默认0

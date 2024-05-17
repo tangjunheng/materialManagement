@@ -30,6 +30,7 @@ public class SetmealController {
             description = "新增套餐",
             summary = "新增套餐"
     )
+    @CacheEvict(cacheNames = "setmealCache",key = "#setmealDTO.categoryId")//key: setmealCache::100
     public Result save(@RequestBody SetmealDTO setmealDTO) {
         setmealService.saveWithMaterial(setmealDTO);
         return Result.success();

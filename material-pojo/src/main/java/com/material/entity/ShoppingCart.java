@@ -25,9 +25,6 @@ public class ShoppingCart implements Serializable {
     //名称
     private String name;
 
-    //用户id
-    private Long userId;
-
     //菜品id
     private Long materialId;
 
@@ -39,6 +36,9 @@ public class ShoppingCart implements Serializable {
 
     //图片
     private String image;
+
+    //用户id
+    private Long userId;
 
     private LocalDateTime createTime;
 }

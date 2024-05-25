@@ -11,6 +11,10 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  # 热部署开关，生产环境下需要关闭
+  devtools:
+    restart:
+      enabled: true
 
 # MyBatis Plus 的配置
 mybatis-plus:

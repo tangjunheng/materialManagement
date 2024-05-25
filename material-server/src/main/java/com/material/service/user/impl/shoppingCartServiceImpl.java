@@ -61,13 +61,13 @@ public class shoppingCartServiceImpl implements ShoppingCartService {
             // TODO 3.如果是套餐的话，查看购物车中关联的所有物资（有n个），对于一种每个关联的物资，关联的物资数量+原有套餐数量*关联的copies+购物车中其它与这个物资关联的套餐*copies+请求的套餐数量*copies<=这个物资的总量
 
         } else {
-            //如果不存在，插入数据，数量就是请求的数量
+            // 如果不存在，插入数据，数量就是请求的数量
 
-            //判断当前添加到购物车的是菜品还是套餐
+            // 判断当前添加到购物车的是菜品还是套餐
             Long materialId = shoppingCartDTO.getMaterialId();
 
             if (materialId != null) {
-                //添加到购物车的是物资
+                // 添加到购物车的是物资
                 // 将物资id封装成数组以方便请求mapper
                 List<Long> materialIds = new ArrayList();
                 materialIds.add(materialId);
@@ -76,7 +76,7 @@ public class shoppingCartServiceImpl implements ShoppingCartService {
                 shoppingCart.setName(materials.get(0).getName());
                 shoppingCart.setImage(materials.get(0).getImage());
             } else {
-                //添加到购物车的是套餐
+                // 添加到购物车的是套餐
                 Setmeal setmeal = setmealMapper.getById(shoppingCartDTO.getSetmealId());
                 shoppingCart.setName(setmeal.getName());
                 shoppingCart.setImage(setmeal.getImage());
@@ -118,19 +118,20 @@ public class shoppingCartServiceImpl implements ShoppingCartService {
         BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
         //设置查询条件，查询当前登录用户的购物车数据
         shoppingCart.setUserId(BaseContext.getCurrentId());
-
+        // 获取要删除的物资或套餐信息
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
 
         if(list != null && list.size() > 0){
+
             shoppingCart = list.get(0);
 
             Integer number = shoppingCart.getNumber();
-            if(number == 1){
-                //当前物资或套餐在购物车中的份数为1，直接删除当前记录
+            if(number <= shoppingCartDTO.getNumber()){
+                //当前物资或套餐在购物车中的份数<=需要删除的份数，直接删除当前记录
                 shoppingCartMapper.deleteById(shoppingCart.getId());
             }else {
-                //当前物资或套餐在购物车中的份数不为1，修改份数即可
-                shoppingCart.setNumber(shoppingCart.getNumber() - 1);
+                //当前物资或套餐在购物车中的份数>需要删除的份数，修改份数即可
+                shoppingCart.setNumber(shoppingCart.getNumber() - shoppingCartDTO.getNumber());
                 shoppingCartMapper.updateNumberById(shoppingCart);
             }
         }

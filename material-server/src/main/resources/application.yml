@@ -39,9 +39,12 @@ material:
     appid: ${material.cos.appid}
     secret-id: ${material.cos.secret-id}
     secret-key: ${material.cos.secret-key}
-    bucket-name: ${material.cos.bucket-name}
-    cos-path: ${material.cos.cos-path}
-    region-name: ap-${material.cos.region-name}
+    region-name: ${material.cos.region-name}
+    material-bucket-name: ${material.cos.material-bucket-name}
+    material-cos-path: ${material.cos.material-cos-path}
+    user-bucket-name: ${material.cos.user-bucket-name}
+    user-cos-path: ${material.cos.user-cos-path}
+
   wechat:
     appid: ${material.wechat.appid}
     secret: ${material.wechat.secret}

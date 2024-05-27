@@ -7,38 +7,35 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
- * 购物车
+ * 订单明细
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShoppingCart implements Serializable {
+public class OrderDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    //名称
+    // 订单id
+    private Long orderId;
+
+    // 名称
     private String name;
 
-    //物资id
+    // 物资id
     private Long materialId;
 
-    //套餐id
+    // 套餐id
     private Long setmealId;
 
-    //数量
+    // 数量
     private Integer number;
 
     //图片
     private String image;
-
-    //用户id
-    private Long userId;
-
-    private LocalDateTime createTime;
 }

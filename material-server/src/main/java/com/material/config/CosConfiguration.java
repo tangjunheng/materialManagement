@@ -2,7 +2,6 @@ package com.material.config;
 
 import com.material.properties.CosProperties;
 import com.material.utils.CosUtil;
-import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.http.HttpProtocol;

@@ -36,7 +36,7 @@ public interface SetmealMapper {
     void update(Setmeal setmeal);
 
     /**
-     * 新增套餐
+     * 新增套餐，并将主键id赋值到setmeal中
      *
      * @param setmeal
      */

@@ -15,13 +15,17 @@ public class CosProperties {
     // 密钥id
     private String secretId;
     // 密钥key
-    private String SecretKey;
-    // 桶名称
-    private String bucketName;
-    // 访问域名
-    private String cosPath;
+    private String secretKey;
     // 地域名称
     private String regionName;
+    // 物资桶名称
+    private String materialBucketName;
+    // 物资访问域名
+    private String materialCosPath;
+    // 用户桶名称
+    private String userBucketName;
+    // 用户访问域名
+    private String userCosPath;
 
 
 }

@@ -53,7 +53,7 @@ public class SetmealServiceImpl implements SetmealService {
         BeanUtils.copyProperties(setmealDTO, setmeal);
         // TODO 先验证分类是否对应得上
 
-        // 向套餐表插入数据
+        // 向套餐表插入数据，这里主键id会赋值到setmeal中
         setmealMapper.insert(setmeal);
 
         // 获取生成的套餐id

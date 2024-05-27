@@ -4,17 +4,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.material.constant.MessageConstant;
+import com.material.context.BaseContext;
 import com.material.dto.user.UserLoginDTO;
+import com.material.dto.user.UserUpdateDTO;
 import com.material.entity.User;
 import com.material.exception.LoginFailedException;
 import com.material.mapper.user.UserMapper;
 import com.material.properties.WeChatProperties;
+import com.material.result.Result;
 import com.material.service.user.UserService;
+import com.material.utils.CosUtil;
 import com.material.utils.HttpClientUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +32,8 @@ public class UserServiceImpl implements UserService {
     //微信服务接口地址
     public static final String WX_LOGIN = "https://api.weixin.qq.com/sns/jscode2session";
 
+    @Resource
+    private CosUtil cosUtil;
     @Resource
     private WeChatProperties weChatProperties;
     @Resource
@@ -54,11 +63,99 @@ public class UserServiceImpl implements UserService {
                     .openid(openid)
                     .createTime(LocalDateTime.now())
                     .build();
-            userMapper.insert(user);//后绪步骤实现
+            userMapper.insert(user);
         }
 
         //返回这个用户对象
         return user;
+    }
+
+    /**
+     * 更新用户信息
+     * @param userUpdateDTO
+     */
+    @Override
+    public void updateInfo(UserUpdateDTO userUpdateDTO) {
+        userMapper.update(userUpdateDTO);
+    }
+
+    /**
+     * 更新头像
+     *
+     * @param file
+     * @return
+     */
+    @Override
+    @Transactional
+    public String uploadAvatar(MultipartFile file) throws IOException {
+        // 获取用户头像路径
+        User user = userMapper.getByUserId(BaseContext.getCurrentId());
+        if (user.getAvatar() != null) {
+            String fileUrl = user.getAvatar();
+            // 截取文件名   https://user-1314771156.cos.ap-guangzhou.myqcloud.com/card4.jpg
+            String filename = fileUrl.substring(fileUrl.lastIndexOf("/")+1);
+            // 删除对应头像
+            cosUtil.deleteUser(filename);
+        }
+
+        // 原始文件名
+        String originalFilename = file.getOriginalFilename();
+        // 截取原始文件名的后缀   dfdfdf.png
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        // 构造新文件名称
+        String objectName = "avatar" + BaseContext.getCurrentId().toString() + extension;
+
+        //文件的请求路径
+        String filePath = cosUtil.uploadUser(file, objectName);
+
+        // 数据库更新
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+        userUpdateDTO.setAvatar(filePath);
+        userMapper.update(userUpdateDTO);
+
+        return filePath;
+
+
+
+    }
+
+    /**
+     * 更新学生证
+     *
+     * @param file
+     * @return
+     */
+    @Override
+    @Transactional
+    public String uploadCard(MultipartFile file) throws IOException {
+        // 获取学生证图片路径
+        User user = userMapper.getByUserId(BaseContext.getCurrentId());
+        if (user.getStudentIdCardImage() != null) {
+            String fileUrl = user.getStudentIdCardImage();
+            // 截取文件名   https://user-1314771156.cos.ap-guangzhou.myqcloud.com/card4.jpg
+            String filename = fileUrl.substring(fileUrl.lastIndexOf("/")+1);
+            // 删除对应头像
+            cosUtil.deleteUser(filename);
+        }
+
+
+
+        // 原始文件名
+        String originalFilename = file.getOriginalFilename();
+        // 截取原始文件名的后缀   dfdfdf.png
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        // 构造新文件名称
+        String objectName = "card" + BaseContext.getCurrentId().toString() + extension;
+
+        //文件的请求路径
+        String filePath = cosUtil.uploadUser(file, objectName);
+
+        // 数据库更新
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+        userUpdateDTO.setStudentIdCardImage(filePath);
+        userMapper.update(userUpdateDTO);
+
+        return filePath;
     }
 
     /**

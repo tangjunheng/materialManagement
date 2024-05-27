@@ -1,8 +1,10 @@
 package com.material.mapper.user;
 
+import com.material.dto.user.UserUpdateDTO;
 import com.material.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserMapper {
@@ -20,6 +22,12 @@ public interface UserMapper {
      * @param user
      */
     void insert(User user);
+
+    @Select("select * from user where id = #{id}")
+    User getByUserId(Long id);
+
+
+    void update(UserUpdateDTO userUpdateDTO);
 
 
 }

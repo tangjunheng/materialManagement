@@ -27,15 +27,18 @@ public class User implements Serializable {
     //手机号
     private String phone;
 
-    //性别 0 女 1 男
-    private String sex;
-
     // 学号
     private String idNumber;
 
-    //头像
+    // 所属学院
+    private String institute;
+
+    // 学生证图片路径
+    private String studentIdCardImage;
+
+    // 头像路径
     private String avatar;
 
-    //注册时间
+    // 注册时间
     private LocalDateTime createTime;
 }

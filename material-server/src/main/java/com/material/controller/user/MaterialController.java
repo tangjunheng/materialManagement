@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-@RestController("userDishController")
+@RestController("userMaterialController")
 @RequestMapping("/user/material")
 @Slf4j
 @Tag(name = "C端-物资浏览接口")

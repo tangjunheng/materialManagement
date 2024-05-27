@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -58,12 +57,12 @@ public class CosUtil {
     }
 
     /**
-     * 文件上传
+     * 物资图片上传
      * @param file 文件
-     * @param key 相对路径
+     * @param key 文件名称
      * @return 文件路径
      */
-    public String upload(MultipartFile file, String key) throws IOException {
+    public String uploadMaterial(MultipartFile file, String key) throws IOException {
 
         // 配置上传图片的元数据
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -74,15 +73,62 @@ public class CosUtil {
         // key 指定文件上传到 COS 上的路径，即对象键。对象键其实就是该文件存储在腾讯云的文件路径和文件名
         // 例如对象键为 folder/picture.jpg，则表示将文件 picture.jpg 上传到 folder 路径下
         // file 要上传的文件
-        PutObjectRequest putObjectRequest = new PutObjectRequest(cosProperties.getBucketName(), key, file.getInputStream(),objectMetadata);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(cosProperties.getMaterialBucketName(), key, file.getInputStream(),objectMetadata);
         cosClient.putObject(putObjectRequest);
 
-        String path = cosProperties.getCosPath()+"/"+key;
+        String path = cosProperties.getMaterialCosPath()+"/"+key;
 
 
         log.info("文件上传到:{}", path);
         return path;
     }
+
+
+    /**
+     * 用户图片上传
+     * @param file 文件
+     * @param key 文件名称
+     * @return 文件路径
+     */
+    public String uploadUser(MultipartFile file, String key) throws IOException {
+
+        // 配置上传图片的元数据
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+
+
+        // bucketName 指定文件将要存放的存储桶
+        // key 指定文件上传到 COS 上的路径，即对象键。对象键其实就是该文件存储在腾讯云的文件路径和文件名
+        // 例如对象键为 folder/picture.jpg，则表示将文件 picture.jpg 上传到 folder 路径下
+        // file 要上传的文件
+        PutObjectRequest putObjectRequest = new PutObjectRequest(cosProperties.getUserBucketName(), key, file.getInputStream(),objectMetadata);
+        cosClient.putObject(putObjectRequest);
+
+        String path = cosProperties.getUserCosPath()+"/"+key;
+
+
+        log.info("文件上传到:{}", path);
+        return path;
+    }
+
+    /**
+     * 删除物资对象
+     * @param key
+     */
+    public void deleteMaterial(String key){
+        cosClient.deleteObject(cosProperties.getUserBucketName(), key);
+    }
+
+
+    /**
+     * 删除用户对象
+     * @param key
+     */
+    public void deleteUser(String key){
+        cosClient.deleteObject(cosProperties.getUserBucketName(), key);
+    }
+
+
 
 
 

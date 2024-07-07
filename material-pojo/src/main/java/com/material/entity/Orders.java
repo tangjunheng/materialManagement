@@ -39,6 +39,9 @@ public class Orders implements Serializable {
     // 备注
     private String remark;
 
+    // 下单时间
+    private LocalDateTime orderTime;
+
     // 用户id
     private Long userId;
 
@@ -50,9 +53,6 @@ public class Orders implements Serializable {
 
     // 订单取消时间
     private LocalDateTime cancelTime;
-
-    // 下单时间
-    private LocalDateTime orderTime;
 
     // 预约使用物资时间
     private LocalDateTime expectedUseTime;

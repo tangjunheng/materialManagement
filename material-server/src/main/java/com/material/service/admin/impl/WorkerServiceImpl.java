@@ -131,7 +131,7 @@ public class WorkerServiceImpl implements WorkerService {
      */
     @Override
     public PageResult pageQuery(WorkerPageQueryDTO workerPageQueryDTO) {
-        // select * from employee limit 0,10
+        // select * from worker limit 0,10
         //开始分页查询
         PageHelper.startPage(workerPageQueryDTO.getPage(), workerPageQueryDTO.getPageSize());
 

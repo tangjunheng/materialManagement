@@ -20,6 +20,7 @@ import java.util.UUID;
 @RequestMapping("/admin/file")
 @Slf4j
 public class FileController {
+
     @Resource
     private CosUtil cosUtil;
 
@@ -34,6 +35,7 @@ public class FileController {
     @PostMapping("/upload")
     public Result<String> upload(MultipartFile file){
         log.info("文件上传：{}",file);
+        // TODO 感觉这个接口如果被DDos攻击的话存储桶会爆炸
 
         try {
             // 原始文件名

@@ -5,19 +5,19 @@ import com.github.pagehelper.PageHelper;
 import com.material.constant.MessageConstant;
 import com.material.context.BaseContext;
 import com.material.dto.user.OrdersPageQueryDTO;
+import com.material.dto.user.OrdersReturnDTO;
 import com.material.dto.user.OrdersSubmitDTO;
 import com.material.entity.OrderDetail;
 import com.material.entity.Orders;
 import com.material.entity.ShoppingCart;
-import com.material.entity.User;
 import com.material.exception.OrderBusinessException;
 import com.material.exception.ShoppingCartBusinessException;
 import com.material.mapper.user.OrderDetailMapper;
-import com.material.mapper.user.OrderMapper;
+import com.material.mapper.user.UserOrderMapper;
 import com.material.mapper.user.ShoppingCartMapper;
 import com.material.mapper.user.UserMapper;
 import com.material.result.PageResult;
-import com.material.service.user.OrderService;
+import com.material.service.user.UserOrderService;
 import com.material.vo.user.OrderSubmitVO;
 import com.material.vo.user.OrderVO;
 import jakarta.annotation.Resource;
@@ -27,18 +27,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 订单
  */
 @Service
 @Slf4j
-public class OrderServiceImpl implements OrderService {
+public class UserOrderServiceImpl implements UserOrderService {
     @Resource
-    private OrderMapper orderMapper;
+    private UserOrderMapper userOrderMapper;
     @Resource
     private OrderDetailMapper orderDetailMapper;
     @Resource
@@ -78,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUserId(userId);
 
         // 添加订单，id自动赋值
-        orderMapper.insert(order);
+        userOrderMapper.insert(order);
 
         // 订单明细数据
         List<OrderDetail> orderDetailList = new LinkedList<>();
@@ -122,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
         ordersPageQueryDTO.setStatus(status);
 
         // 分页条件查询
-        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Page<Orders> page = userOrderMapper.pageQuery(ordersPageQueryDTO);
 
         List<OrderVO> list = new ArrayList();
         long total = page.getTotal();
@@ -152,14 +150,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void userCancelById(Long id) throws Exception {
         // 根据id查询订单
-        Orders ordersDB = orderMapper.getById(id);
+        Orders ordersDB = userOrderMapper.getById(id);
 
         // 校验订单是否存在
         if (ordersDB == null) {
             throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
 
-        //订单状态 1待处理 2已接单 3物资准备完毕 4用户使用物资 5用户归还物资 6确认物资归还状况 7已取消
+        //订单状态 1待处理 2已接单 3物资准备完毕 4用户归还物资 5确认物资归还状况（完成订单） 6已取消  7出现异常
         if (ordersDB.getStatus() > 2) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
@@ -171,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setStatus(Orders.CANCELLED);
         orders.setCancelReason("用户取消");
         orders.setCancelTime(LocalDateTime.now());
-        orderMapper.update(orders);
+        userOrderMapper.update(orders);
     }
 
     /**
@@ -183,7 +181,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderVO details(Long id) {
         // 根据id查询订单
-        Orders orders = orderMapper.getById(id);
+        Orders orders = userOrderMapper.getById(id);
 
         // 查询该订单对应的物资/套餐明细
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
@@ -195,5 +193,75 @@ public class OrderServiceImpl implements OrderService {
 
         return orderVO;
     }
+
+    /**
+     * 用户返还物资
+     *
+     * @param ordersReturnDTO
+     * @return
+     */
+    @Override
+    public void returnMaterials(OrdersReturnDTO ordersReturnDTO) {
+
+        //提前获取数据库中的详细信息
+        List<OrderDetail> dbOrderDetails = orderDetailMapper.getByOrderId(ordersReturnDTO.getOrderId());
+        // 将数据库中的 OrderDetail 对象放入一个 Map 中，以 id 为键
+        Map<Long, OrderDetail> dbOrderDetailMap = new HashMap<>();
+        for (OrderDetail dbOrderDetail : dbOrderDetails) {
+            dbOrderDetailMap.put(dbOrderDetail.getId(), dbOrderDetail);
+        }
+
+        //根据用户id查询订单，做安全验证
+        // TODO 可以优化只获取status为物资准备完毕状态的订单
+        List<Orders> orders = userOrderMapper.getByUserId(BaseContext.getCurrentId());
+
+
+        for (int i = 0; i < orders.size(); i++) {
+            if (ordersReturnDTO.getOrderId() == orders.get(i).getId()) {
+                //判断status是否正常
+                //订单状态 1待处理 2已接单 3物资准备完毕 4用户归还物资 5确认物资归还状况（完成订单） 6已取消  7出现异常
+                if (orders.get(i).getStatus() != 3) {
+                    throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+                }
+
+                //判断订单详情是否对应上
+                for (OrderDetail orderDetail : ordersReturnDTO.getOrderDetailList()) {
+                    Long id = orderDetail.getId();
+                    if (dbOrderDetailMap.containsKey(id)) {
+                        //对比返回的数量是否大于数据库中的数量
+                        OrderDetail dbOrderDetail = dbOrderDetailMap.get(id);
+                        //如果大于，抛出异常
+                        if (orderDetail.getNumber() > dbOrderDetail.getNumber()) {
+                            throw new OrderBusinessException(MessageConstant.RETURN_MATERIAL_NUMBER_ERROR);
+                        }
+
+                        // 移除已匹配的元素
+                        dbOrderDetailMap.remove(id);
+                    } else {
+                        //如果没找到，抛出异常
+                        throw new OrderBusinessException(MessageConstant.RETURN_MATERIAL_ERROR);
+                    }
+                }
+
+                //没有出现异常，则表明全部匹配成功,写入数据库
+                orderDetailMapper.returnMaterials(ordersReturnDTO.getOrderDetailList());
+
+                // 更新订单状态
+                Orders orders2 = new Orders();
+                orders2.setId(orders.get(i).getId());
+                orders2.setStatus(Orders.RETURN_MATERIALS);
+                orders2.setCancelTime(LocalDateTime.now());
+                userOrderMapper.update(orders2);
+                return;
+            }
+
+        }
+
+        // 如果没有进入if条件return返回，抛出异常
+        throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+
+    }
+
+
 
 }

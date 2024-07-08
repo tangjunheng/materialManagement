@@ -1,11 +1,12 @@
 package com.material.service.user;
 
+import com.material.dto.user.OrdersReturnDTO;
 import com.material.dto.user.OrdersSubmitDTO;
 import com.material.result.PageResult;
 import com.material.vo.user.OrderSubmitVO;
 import com.material.vo.user.OrderVO;
 
-public interface OrderService {
+public interface UserOrderService {
     /**
      * 用户下单
      * @param ordersSubmitDTO
@@ -34,4 +35,11 @@ public interface OrderService {
      * @return
      */
     OrderVO details(Long id);
+
+    /**
+     * 用户返还物资
+     *
+     * @return
+     */
+    void returnMaterials(OrdersReturnDTO ordersReturnDTO);
 }

@@ -1,30 +1,28 @@
-package com.material.mapper.user;
+package com.material.mapper.admin;
 
 import com.github.pagehelper.Page;
 import com.material.dto.user.OrdersPageQueryDTO;
 import com.material.entity.Orders;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Mapper
-public interface OrderMapper {
-
-    /**
-     * 插入订单数据，id自动赋值
-     * @param orders
-     */
-    void insert(Orders orders);
-
+public interface AdminOrderMapper {
     /**
      * 分页条件查询并按下单时间排序
      * @param ordersPageQueryDTO
      */
     Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+
+
+    /**
+     * 获取整张表Status
+     * @return
+     */
+    @Select("select status from orders")
+    List<Integer> getStatus();
 
     /**
      * 根据id查询订单

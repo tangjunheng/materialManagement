@@ -1,9 +1,10 @@
 package com.material.controller.user;
 
+import com.material.dto.user.OrdersReturnDTO;
 import com.material.dto.user.OrdersSubmitDTO;
 import com.material.result.PageResult;
 import com.material.result.Result;
-import com.material.service.user.OrderService;
+import com.material.service.user.UserOrderService;
 import com.material.vo.user.OrderSubmitVO;
 import com.material.vo.user.OrderVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     @Resource
-    private OrderService orderService;
+    private UserOrderService userOrderService;
 
     /**
      * 用户下单
@@ -37,7 +38,7 @@ public class OrderController {
     )
     public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) {
         log.info("用户下单：{}", ordersSubmitDTO);
-        OrderSubmitVO orderSubmitVO = orderService.submitOrder(ordersSubmitDTO);
+        OrderSubmitVO orderSubmitVO = userOrderService.submitOrder(ordersSubmitDTO);
         return Result.success(orderSubmitVO);
     }
 
@@ -53,7 +54,7 @@ public class OrderController {
             summary = "查询订单详情"
     )
     public Result<OrderVO> details(@PathVariable("id") Long id) {
-        OrderVO orderVO = orderService.details(id);
+        OrderVO orderVO = userOrderService.details(id);
         return Result.success(orderVO);
     }
 
@@ -61,7 +62,7 @@ public class OrderController {
      * 历史订单查询
      * @param page
      * @param pageSize
-     * @param status 订单状态 1待处理 2已接单 3物资准备完毕 4用户使用物资 5用户归还物资 6确认物资归还状况 7已取消
+     * @param status 订单状态 1待处理 2已接单 3物资准备完毕 4用户归还物资 5确认物资归还状况（完成订单） 6已取消  7出现异常
      * @return
      */
     @GetMapping("/historyOrders")
@@ -71,7 +72,7 @@ public class OrderController {
     )
     public Result<PageResult> page(int page, int pageSize, Integer status) {
         // TODO 优化可使用OrdersPageQueryDTO添加根据时间分页
-        PageResult pageResult = orderService.pageQuery4User(page, pageSize, status);
+        PageResult pageResult = userOrderService.pageQuery4User(page, pageSize, status);
         return Result.success(pageResult);
     }
 
@@ -88,8 +89,27 @@ public class OrderController {
     )
     public Result cancel(@PathVariable("id") Long id) throws Exception {
         log.info("用户取消订单：{}", id);
-        orderService.userCancelById(id);
+        userOrderService.userCancelById(id);
         return Result.success();
     }
+
+    /**
+     * 用户返还物资
+     *
+     * @return
+     */
+    @PutMapping("/return")
+    @Operation(
+            description = "用户返还物资",
+            summary = "用户返还物资"
+    )
+    public Result returnMaterials(@RequestBody OrdersReturnDTO ordersReturnDTO) throws Exception {
+        log.info("用户取消订单：{}", ordersReturnDTO.getOrderId());
+        userOrderService.returnMaterials(ordersReturnDTO);
+        return Result.success();
+    }
+
+
+
 
 }

@@ -10,4 +10,19 @@
             (#{od.name},#{od.image},#{od.orderId},#{od.materialId},#{od.setmealId},#{od.number})
         </foreach>
     </insert>
+    <update id="returnMaterials" parameterType="java.util.List">
+        update order_detail
+        <trim prefix="SET" suffixOverrides=",">
+            number = CASE id
+            <foreach collection="list" item="item" index="index">
+                WHEN #{item.id} THEN #{item.number}
+            </foreach>
+            ELSE number
+            END
+        </trim>
+        WHERE id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
 </mapper>

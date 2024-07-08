@@ -18,22 +18,22 @@ import java.time.LocalDateTime;
 public class Orders implements Serializable {
 
     /**
-     * 订单状态 1待处理 2已接单 3物资准备完毕 4用户使用物资 5用户归还物资 6确认物资归还状况 7已取消
+     * 订单状态 1待处理 2已接单 3物资准备完毕 4用户归还物资 5确认物资归还状况（完成订单） 6已取消  7出现异常
      */
     public static final Integer TO_BE_CONFIRMED = 1;
     public static final Integer CONFIRMED = 2;
     public static final Integer MATERIALS_READY = 3;
-    public static final Integer USING_MATERIALS = 4;
-    public static final Integer RETURN_MATERIALS = 5;
-    public static final Integer RETURNED_MATERIALS_CONFIRMED = 6;
-    public static final Integer CANCELLED = 7;
+    public static final Integer RETURN_MATERIALS = 4;
+    public static final Integer RETURNED_MATERIALS_CONFIRMED = 5;
+    public static final Integer CANCELLED = 6;
+    public static final Integer HAVE_EXCEPTION = 7;
 
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    // 订单状态 1待处理 2已接单 3物资准备完毕 4用户使用物资 5用户已归还物资 6管理员已确认物资归还状况 7已取消
+    // 订单状态 1待处理 2已接单 3物资准备完毕 4用户使用物资 5用户已归还物资 6完成订单 7已取消 8出现异常
     private Integer status;
 
     // 备注
@@ -63,8 +63,17 @@ public class Orders implements Serializable {
     // 物资准备完毕时间
     private LocalDateTime readyTime;
 
+    // 实际开始时间
+    private LocalDateTime useTime;
+
     // 实际归还时间
     private LocalDateTime returnTime;
+
+    // 订单完成时间
+    private LocalDateTime completeTime;
+
+    // 异常信息
+    private String exceptionMessage;
 
 
 

@@ -28,4 +28,7 @@ public class MessageConstant {
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String PARAMETERS_ERROR = "参数错误";
+    public static final String RETURN_MATERIAL_NUMBER_ERROR = "返还物资数量错误";
+    public static final String RETURN_MATERIAL_ERROR = "返还物资错误，找不到对应物资";
+
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.material.mapper.admin.AdminOrderMapper">
+    <update id="update" parameterType="com.material.entity.Orders">
+        update orders
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="cancelReason != null and cancelReason!='' ">
+                cancel_reason=#{cancelReason},
+            </if>
+            <if test="rejectionReason != null and rejectionReason!='' ">
+                rejection_reason=#{rejectionReason},
+            </if>
+            <if test="cancelTime != null">
+                cancel_time=#{cancelTime},
+            </if>
+            <if test="expectedUseTime != null">
+                expected_use_time = #{expectedUseTime},
+            </if>
+            <if test="expectedReturnTime != null">
+                expected_return_time = #{expectedReturnTime},
+            </if>
+            <if test="readyTime != null">
+                ready_time = #{readyTime},
+            </if>
+            <if test="useTime != null">
+                use_time = #{useTime},
+            </if>
+            <if test="returnTime != null">
+                return_time = #{returnTime},
+            </if>
+            <if test="completeTime != null">
+                complete_time = #{completeTime},
+            </if>
+            <if test="exceptionMessage != null">
+                exception_message = #{exceptionMessage},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="pageQuery" resultType="Orders">
+        select * from orders
+        <where>
+            <if test="id != null and id!=''">
+                and id like concat('%',#{id},'%')
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="beginTime != null">
+                and order_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and order_time &lt;= #{endTime}
+            </if>
+        </where>
+        order by order_time desc
+    </select>
+
+
+
+
+</mapper>

@@ -1,5 +1,6 @@
 package com.material.service.admin;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.material.dto.admin.OrdersCancelDTO;
 import com.material.dto.admin.OrdersConfirmDTO;
 import com.material.dto.admin.OrdersExceptionDTO;
@@ -60,7 +61,7 @@ public interface AdminOrderService {
      *
      * @param id
      */
-    void delivery(Long id);
+    void delivery(Long id) throws JsonProcessingException;
 
     /**
      * 完成订单

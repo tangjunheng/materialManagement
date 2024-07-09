@@ -1,5 +1,6 @@
 package com.material.service.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.material.dto.user.OrdersReturnDTO;
 import com.material.dto.user.OrdersSubmitDTO;
 import com.material.result.PageResult;
@@ -12,7 +13,7 @@ public interface UserOrderService {
      * @param ordersSubmitDTO
      * @return
      */
-    OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO);
+    OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) throws JsonProcessingException;
 
     /**
      * 分页查询历史订单

@@ -1,6 +1,7 @@
 package com.material.controller.admin;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.material.dto.admin.OrdersCancelDTO;
 import com.material.dto.admin.OrdersConfirmDTO;
 import com.material.dto.admin.OrdersExceptionDTO;
@@ -128,7 +129,7 @@ public class OrderController {
             description = "派送订单",
             summary = "派送订单"
     )
-    public Result delivery(@PathVariable("id") Long id) {
+    public Result delivery(@PathVariable("id") Long id) throws JsonProcessingException {
         adminOrderService.delivery(id);
         return Result.success();
     }

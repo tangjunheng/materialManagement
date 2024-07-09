@@ -41,7 +41,7 @@ public class UserController {
     private JwtProperties jwtProperties;
 
     /**
-     * 微信登录
+     * 微信登录（因为小程序只能登录自己的账号，所以不需要登出）
      * @param userLoginDTO
      * @return
      */

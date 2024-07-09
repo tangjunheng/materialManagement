@@ -1,8 +1,11 @@
 package com.material.service.user.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.material.constant.MessageConstant;
+import com.material.constant.WebSocketType;
 import com.material.context.BaseContext;
 import com.material.dto.user.OrdersPageQueryDTO;
 import com.material.dto.user.OrdersReturnDTO;
@@ -15,11 +18,11 @@ import com.material.exception.ShoppingCartBusinessException;
 import com.material.mapper.user.OrderDetailMapper;
 import com.material.mapper.user.UserOrderMapper;
 import com.material.mapper.user.ShoppingCartMapper;
-import com.material.mapper.user.UserMapper;
 import com.material.result.PageResult;
 import com.material.service.user.UserOrderService;
 import com.material.vo.user.OrderSubmitVO;
 import com.material.vo.user.OrderVO;
+import com.material.websocket.AdminWebSocketServer;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -42,7 +45,7 @@ public class UserOrderServiceImpl implements UserOrderService {
     @Resource
     private ShoppingCartMapper shoppingCartMapper;
     @Resource
-    private UserMapper userMapper;
+    private AdminWebSocketServer adminWebSocketServer;
 
 
 
@@ -53,7 +56,7 @@ public class UserOrderServiceImpl implements UserOrderService {
      * @return
      */
     @Transactional
-    public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
+    public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) throws JsonProcessingException {
 
         Long userId = BaseContext.getCurrentId();
         ShoppingCart shoppingCart = new ShoppingCart();
@@ -78,6 +81,7 @@ public class UserOrderServiceImpl implements UserOrderService {
         // 添加订单，id自动赋值
         userOrderMapper.insert(order);
 
+
         // 订单明细数据
         List<OrderDetail> orderDetailList = new LinkedList<>();
         for (ShoppingCart cart : shoppingCartList) {
@@ -99,7 +103,26 @@ public class UserOrderServiceImpl implements UserOrderService {
                 .orderTime(order.getOrderTime())
                 .build();
 
+        //使用WebSocket在用户下单后发送提升到admin端
+        Map map = new HashMap();
+        map.put("type", WebSocketType.TO_BE_CONFIRMED);//消息类型，1表示来单提醒
+        map.put("orderId", order.getId());
+
+        //使用Jackson转为JSON
+        // 创建一个ObjectMapper对象
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // 将map对象转换为JSON字符串
+        String jsonString = objectMapper.writeValueAsString(map);
+
+        //通过WebSocket实现来单提醒，向客户端浏览器推送消息
+        adminWebSocketServer.sendToAllClient(jsonString);
+
+
+
         return orderSubmitVO;
+
+
     }
 
     /**
@@ -202,6 +225,8 @@ public class UserOrderServiceImpl implements UserOrderService {
      */
     @Override
     public void returnMaterials(OrdersReturnDTO ordersReturnDTO) {
+
+        // TODO 获取二维码门禁
 
         //提前获取数据库中的详细信息
         List<OrderDetail> dbOrderDetails = orderDetailMapper.getByOrderId(ordersReturnDTO.getOrderId());

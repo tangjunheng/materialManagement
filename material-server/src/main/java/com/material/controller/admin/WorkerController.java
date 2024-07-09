@@ -66,7 +66,11 @@ public class WorkerController {
             summary = "员工退出登录"
     )
     public Result<String> logout(){
-        // TODO 将token置为过期
+        // TODO 因为Token是无状态的，无法重置过期时间，JWT失效的唯一途径就是等待时间过期，
+        // TODO 所以可以让前端将Token直接丢弃。
+        // TODO 可以使用白名单或黑名单的方式让JWT失效，黑名单的具体操作就说将注销的JWT放入redis中，
+        // TODO 并且设置过期时间为JWT的过期时间，请求资源时判断该JWT是否在redis中，如果存在则拒绝访问。
+
         return Result.success();
     }
 

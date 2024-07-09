@@ -1,8 +1,12 @@
 package com.material.service.admin.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.material.constant.MessageConstant;
+import com.material.constant.WebSocketType;
+import com.material.context.BaseContext;
 import com.material.dto.admin.OrdersCancelDTO;
 import com.material.dto.admin.OrdersConfirmDTO;
 import com.material.dto.admin.OrdersExceptionDTO;
@@ -18,6 +22,7 @@ import com.material.result.PageResult;
 import com.material.service.admin.AdminOrderService;
 import com.material.vo.admin.OrderStatisticsVO;
 import com.material.vo.user.OrderVO;
+import com.material.websocket.UserWebSocketServer;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,7 +31,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,9 +42,10 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 
     @Resource
     private AdminOrderMapper adminOrderMapper;
-
     @Resource
     private OrderDetailMapper orderDetailMapper;
+    @Resource
+    private UserWebSocketServer userWebSocketServer;
     /**
      * 条件搜索订单
      *
@@ -183,7 +191,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
      * @param id
      */
     @Override
-    public void delivery(Long id) {
+    public void delivery(Long id) throws JsonProcessingException {
         // 根据id查询订单
         Orders ordersDB = adminOrderMapper.getById(id);
 
@@ -199,6 +207,22 @@ public class AdminOrderServiceImpl implements AdminOrderService {
         orders.setStatus(Orders.MATERIALS_READY);
 
         adminOrderMapper.update(orders);
+
+        //使用WebSocket在管理员准备好物资后发送提示给用户
+        Map map = new HashMap();
+        map.put("type", WebSocketType.MATERIALS_READY);//消息类型，3表示物资准备完毕
+        map.put("orderId", orders.getId());
+        map.put("adminId", BaseContext.getCurrentId());
+
+        //使用Jackson转为JSON
+        // 创建一个ObjectMapper对象
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // 将map对象转换为JSON字符串
+        String jsonString = objectMapper.writeValueAsString(map);
+
+        //通过WebSocket发送信息
+        userWebSocketServer.sendMessageToUser(ordersDB.getUserId().toString(),jsonString);
     }
 
     /**

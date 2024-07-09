@@ -1,5 +1,6 @@
 package com.material.controller.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.material.dto.user.OrdersReturnDTO;
 import com.material.dto.user.OrdersSubmitDTO;
 import com.material.result.PageResult;
@@ -36,7 +37,7 @@ public class OrderController {
             description = "用户下单",
             summary = "用户下单"
     )
-    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) {
+    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) throws JsonProcessingException {
         log.info("用户下单：{}", ordersSubmitDTO);
         OrderSubmitVO orderSubmitVO = userOrderService.submitOrder(ordersSubmitDTO);
         return Result.success(orderSubmitVO);
@@ -108,6 +109,8 @@ public class OrderController {
         userOrderService.returnMaterials(ordersReturnDTO);
         return Result.success();
     }
+
+    // TODO 用户报告出现异常
 
 
 

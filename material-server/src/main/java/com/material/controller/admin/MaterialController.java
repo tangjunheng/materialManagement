@@ -20,7 +20,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/admin/material")
 @Slf4j
-@Tag(name = "物资相关接口")
+@Tag(name = "B端-物资相关接口")
 public class MaterialController {
 
     @Resource

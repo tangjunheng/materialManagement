@@ -30,7 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user/user")
 @Slf4j
-@Tag(name = "用户相关接口")
+@Tag(name = "C端-用户相关接口")
 public class UserController {
 
     @Resource

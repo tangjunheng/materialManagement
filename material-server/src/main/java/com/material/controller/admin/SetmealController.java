@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/setmeal")
 @Slf4j
-@Tag(name = "套餐相关接口")
+@Tag(name = "B端-套餐相关接口")
 public class SetmealController {
 
     @Resource

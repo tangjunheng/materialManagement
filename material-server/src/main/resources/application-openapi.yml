@@ -29,8 +29,4 @@ knife4j:
     language: zh_cn
   #开启生产环境屏蔽
   production: false
-  #是否启用登录认证
-  basic:
-    enable: true
-    username: thomas # 自己设置一个
-    password: thomas666 # 自己设置一个
+

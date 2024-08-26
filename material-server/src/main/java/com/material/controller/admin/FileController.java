@@ -5,6 +5,8 @@ import com.material.constant.MessageConstant;
 import com.material.mapper.admin.MaterialMapper;
 import com.material.result.Result;
 import com.material.utils.CosUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin/file")
 @Slf4j
+@Tag(name = "通用接口-文件")
 public class FileController {
 
     @Resource
@@ -33,6 +36,10 @@ public class FileController {
      * @return
      */
     @PostMapping("/upload")
+    @Operation(
+            description = "文件上传",
+            summary = "文件上传"
+    )
     public Result<String> upload(MultipartFile file){
         log.info("文件上传：{}",file);
         // TODO 感觉这个接口如果被DDos攻击的话存储桶会爆炸
@@ -56,6 +63,10 @@ public class FileController {
     }
 
     @GetMapping("/delete")
+    @Operation(
+            description = "删除文件",
+            summary = "删除文件"
+    )
     public Result<String> delete(String fileName){
         log.info("删除文件：{}",fileName);
         cosUtil.deleteMaterial(fileName);

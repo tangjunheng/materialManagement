@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin/worker")
 @Slf4j
-@Tag(name = "工作人员相关接口")
+@Tag(name = "B端-工作人员相关接口")
 public class WorkerController {
 
     @Resource

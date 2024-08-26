@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/category")
 @Slf4j
-@Tag(name = "物资管理相关接口")
+@Tag(name = "B端-物资管理相关接口")
 public class CategoryController {
 
     @Resource
